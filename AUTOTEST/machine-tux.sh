@@ -55,16 +55,17 @@ mv -f check-mpi.??? $output_dir
 
 # Basic build and run tests
 mo="-j test"
-ro="-ams -ij -sstruct -struct"
+ro="-ams -ij -sstruct -struct -lobpcg"
 eo=""
 
 co=""
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo
 ./renametest.sh basic $output_dir/basic-default
 
+# Test linking for different languages
+co=""
 ./test.sh configure.sh $src_dir $co
 ./test.sh make.sh $src_dir $mo
-# Test linking for different languages (depends on previous compile test)
 link_opts="all++ all77"
 for opt in $link_opts
 do
@@ -115,7 +116,7 @@ RO="-fac"
 ./renametest.sh basic $output_dir/basic-debug2
 
 co="--with-openmp"
-RO="-ams -ij -sstruct -struct -rt -D HYPRE_NO_SAVED -nthreads 2"
+RO="-ams -ij -sstruct -struct -lobpcg -rt -D HYPRE_NO_SAVED -nthreads 2"
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo -ro: $RO
 ./renametest.sh basic $output_dir/basic--with-openmp
 
@@ -145,7 +146,7 @@ co="--enable-debug --enable-global-partition"
 
 # CMake build and run tests
 mo="-j"
-ro="-ams -ij -sstruct -struct"
+ro="-ams -ij -sstruct -struct -lobpcg"
 eo=""
 
 co=""
