@@ -105,6 +105,7 @@ FILES =\
  par_laplace_27pt.c\
  par_laplace_9pt.c\
  par_lr_interp.c\
+ par_mod_lr_interp.c\
  par_mgr.c\
  par_mgr_setup.c\
  par_mgr_solve.c\
