@@ -446,6 +446,18 @@ hypre_ParCSRMatrixGenerateFFFC( hypre_ParCSRMatrix  *A,
 
    //hypre_MatvecCommPkgCreate(A_FC);
    //hypre_MatvecCommPkgCreate(A_FF);
+   hypre_TFree(fine_to_coarse, HYPRE_MEMORY_HOST);
+   hypre_TFree(fine_to_fine, HYPRE_MEMORY_HOST);
+   hypre_TFree(big_convert, HYPRE_MEMORY_HOST);
+   hypre_TFree(fine_to_coarse_offd, HYPRE_MEMORY_HOST);
+   hypre_TFree(fine_to_fine_offd, HYPRE_MEMORY_HOST);
+   hypre_TFree(big_convert_offd, HYPRE_MEMORY_HOST);
+   hypre_TFree(CF_marker_offd, HYPRE_MEMORY_HOST);
+   hypre_TFree(int_buf_data, HYPRE_MEMORY_HOST);
+   hypre_TFree(big_buf_data, HYPRE_MEMORY_HOST);
+
+   hypre_TFree(cpt_array, HYPRE_MEMORY_HOST);
+   hypre_TFree(fpt_array, HYPRE_MEMORY_HOST);
 
    *A_FC_ptr = A_FC;
    *A_FF_ptr = A_FF;
