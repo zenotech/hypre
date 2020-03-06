@@ -1807,6 +1807,20 @@ hypre_BoomerAMGSetup( void               *amg_vdata,
                                              debug_flag, strong_threshold, trunc_factor, P_max_elmts, col_offd_S_to_A, &P);
                hypre_TFree(col_offd_S_to_A, HYPRE_MEMORY_HOST);
             }
+            else if (interp_type == 16) /*Simplified Extended+i MM interpolation */
+            {
+               hypre_BoomerAMGBuildModSimpleExtPIInterp(A_array[level], CF_marker,
+                                             S, coarse_pnts_global, num_functions, dof_func_array[level],
+                                             debug_flag, strong_threshold, trunc_factor, P_max_elmts, col_offd_S_to_A, &P);
+               hypre_TFree(col_offd_S_to_A, HYPRE_MEMORY_HOST);
+            }
+            else if (interp_type == 17) /*Simplified Extended+i MM interpolation */
+            {
+               hypre_BoomerAMGBuildModExtPIInterp(A_array[level], CF_marker,
+                                             S, coarse_pnts_global, num_functions, dof_func_array[level],
+                                             debug_flag, strong_threshold, trunc_factor, P_max_elmts, col_offd_S_to_A, &P);
+               hypre_TFree(col_offd_S_to_A, HYPRE_MEMORY_HOST);
+            }
             else if (interp_type == 7) /*Extended+i (if no common C) interpolation */
             {
                hypre_BoomerAMGBuildExtPICCInterp(A_array[level], CF_marker,
@@ -2668,6 +2682,7 @@ hypre_BoomerAMGSetup( void               *amg_vdata,
             hypre_ParCSRMatrixSetDNumNonzeros(A_H);
          }
          A_array[level] = A_H;
+         //hypre_ParCSRMatrixPrint (A_H, "AH");
       }
 
       size = ((HYPRE_Real) fine_size )*.75;

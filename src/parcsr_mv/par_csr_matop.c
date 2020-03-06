@@ -5206,7 +5206,7 @@ hypre_ExchangeExternalRowsWait(void *vrequest)
  * ----------------------------------------------------------------------------- */
 
 HYPRE_Int
-hypre_ParCSRMatrixExtractSubmatrixFC( hypre_ParCSRMatrix  *A,
+hypre_ParCSRMatrixExtractStrongSubmatrixFC( hypre_ParCSRMatrix  *A,
                                       HYPRE_Int           *CF_marker,
                                       HYPRE_BigInt        *cpts_starts_in,
                                       const char          *job,
