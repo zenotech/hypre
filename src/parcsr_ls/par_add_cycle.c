@@ -178,13 +178,17 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
 
          alpha = -1.0;
          beta = 1.0;
-         hypre_ParCSRMatrixMatvec(alpha, A_array[fine_grid], U_array[fine_grid],
-                                     beta, Vtemp);
+
+         //Fix Vtemp size
+         const HYPRE_Int saved_size = hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp));
+         const HYPRE_Int desired_size = hypre_VectorSize(hypre_ParVectorLocalVector(F_array[fine_grid]));
+         hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = desired_size;
+         hypre_ParCSRMatrixMatvec(alpha, A_array[fine_grid], U_array[fine_grid], beta, Vtemp);
 
          alpha = 1.0;
          beta = 0.0;
-         hypre_ParCSRMatrixMatvecT(alpha,R_array[fine_grid],Vtemp,
-                                      beta,F_array[coarse_grid]);
+         hypre_ParCSRMatrixMatvecT(alpha,R_array[fine_grid],Vtemp, beta,F_array[coarse_grid]);
+         hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = saved_size;
       }
       else /* additive version */
       {
@@ -196,8 +200,14 @@ hypre_BoomerAMGAdditiveCycle( void              *amg_vdata)
          }
          alpha = 1.0;
          beta = 0.0;
+
+         //Note: ParVectorCopy does not update the size of the destination vector
+         const HYPRE_Int saved_size = hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp));
+         const HYPRE_Int desired_size = hypre_VectorSize(hypre_ParVectorLocalVector(F_array[fine_grid]));
+         hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = desired_size;
          hypre_ParCSRMatrixMatvecT(alpha,R_array[fine_grid],Vtemp,
                                       beta,F_array[coarse_grid]);
+         hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = saved_size;
       }
    }
 

@@ -739,6 +739,10 @@ hypre_MGRCycle( void               *mgr_vdata,
          wall_time = time_getWallclockSeconds() - wall_time;
          //if (my_id == 0) hypre_printf("F-relaxation solve level %d: %f\n", coarse_grid, wall_time);
 
+         const HYPRE_Int saved_size = hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp));
+         const HYPRE_Int desired_size = hypre_VectorSize(hypre_ParVectorLocalVector(F_array[fine_grid]));
+         hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = desired_size;
+
          // Update residual and compute coarse-grid rhs
          alpha = -1.0;
          beta = 1.0;
@@ -769,6 +773,7 @@ hypre_MGRCycle( void               *mgr_vdata,
          ++level;
 
          if (level == num_coarse_levels) cycle_type = 3;
+         hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = saved_size;
       } // end cycle_type == 1
       else if(level != 0)
       {
