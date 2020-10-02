@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -32,37 +27,40 @@ hypre_PrintBoxArrayData( FILE            *file,
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
-                   
+
    HYPRE_Int        data_box_volume;
-                   
+
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
    hypre_Index      index;
-                   
+
    HYPRE_Int        i, j, d;
    HYPRE_Complex    value;
    HYPRE_Complex   *data_host;
+   HYPRE_Complex   *data_host_saved = NULL;
+
    /*----------------------------------------
     * Print data
     *----------------------------------------*/
-#if HYPRE_MEMORY_DEVICE_ACT == HYPRE_MEMORY_DEVICE
-   HYPRE_Complex   *data_host_saved;
-   HYPRE_Int tot_size = 0;
-   hypre_ForBoxI(i, data_space)
+   if (hypre_GetActualMemLocation(HYPRE_MEMORY_DEVICE) != hypre_MEMORY_HOST)
    {
-      data_box = hypre_BoxArrayBox(data_space, i);
-      data_box_volume = hypre_BoxVolume(data_box);
-      tot_size += num_values * data_box_volume;
+      HYPRE_Int tot_size = 0;
+      hypre_ForBoxI(i, data_space)
+      {
+         data_box = hypre_BoxArrayBox(data_space, i);
+         data_box_volume = hypre_BoxVolume(data_box);
+         tot_size += num_values * data_box_volume;
+      }
+      data_host = hypre_CTAlloc(HYPRE_Complex, tot_size, HYPRE_MEMORY_HOST);
+      hypre_TMemcpy(data_host, data, HYPRE_Complex, tot_size, HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
+      data_host_saved = data_host;
    }
-   data_host = hypre_CTAlloc(HYPRE_Complex, tot_size, HYPRE_MEMORY_HOST);
-   hypre_TMemcpy(data_host, data, HYPRE_Complex, tot_size,
-                 HYPRE_MEMORY_HOST, HYPRE_MEMORY_DEVICE);
-   data_host_saved = data_host;
-#else
-   data_host = data;
-#endif
- 
+   else
+   {
+      data_host = data;
+   }
+
    hypre_SetIndex(stride, 1);
 
    hypre_ForBoxI(i, box_array)
@@ -74,7 +72,7 @@ hypre_PrintBoxArrayData( FILE            *file,
       data_box_volume = hypre_BoxVolume(data_box);
 
       hypre_BoxGetSize(box, loop_size);
- 
+
       hypre_SerialBoxLoop1Begin(dim, loop_size,
                                 data_box, start, stride, datai);
       {
@@ -103,10 +101,8 @@ hypre_PrintBoxArrayData( FILE            *file,
       data_host += num_values*data_box_volume;
    }
 
-#if HYPRE_MEMORY_DEVICE_ACT == HYPRE_MEMORY_DEVICE
    hypre_TFree(data_host_saved, HYPRE_MEMORY_HOST);
-#endif
-   
+
    return hypre_error_flag;
 }
 
@@ -129,14 +125,14 @@ hypre_PrintCCVDBoxArrayData( FILE            *file,
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
-                   
+
    HYPRE_Int        data_box_volume;
-                   
+
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
    hypre_Index      index;
-                   
+
    HYPRE_Int        i, j, d;
    HYPRE_Complex    value;
 
@@ -161,7 +157,7 @@ hypre_PrintCCVDBoxArrayData( FILE            *file,
       }
       ++data;
    }
-   
+
 
    /* Then each box has a variable, diagonal, part of the matrix: */
    hypre_ForBoxI(i, box_array)
@@ -214,7 +210,7 @@ hypre_PrintCCBoxArrayData( FILE            *file,
                            HYPRE_Complex   *data       )
 {
    HYPRE_Int        datai;
-                   
+
    HYPRE_Int        i, j;
    HYPRE_Complex    value;
 
@@ -257,13 +253,13 @@ hypre_ReadBoxArrayData( FILE            *file,
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
-                   
+
    HYPRE_Int        data_box_volume;
-                   
+
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
-                   
+
    HYPRE_Int        i, j, d, idummy;
 
    /*----------------------------------------
@@ -321,13 +317,13 @@ hypre_ReadBoxArrayData_CC( FILE            *file,
 {
    hypre_Box       *box;
    hypre_Box       *data_box;
-                   
+
    HYPRE_Int        data_box_volume, constant_stencil_size;
-                   
+
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      stride;
-                   
+
    HYPRE_Int        i, j, d, idummy;
 
    /*----------------------------------------

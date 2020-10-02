@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #include "HYPRE_krylov.h"
 
@@ -29,18 +24,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-  /*BHEADER**********************************************************************
-   * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-   * Produced at the Lawrence Livermore National Laboratory.
-   * This file is part of HYPRE.  See file COPYRIGHT for details.
-   *
-   * HYPRE is free software; you can redistribute it and/or modify it under the
-   * terms of the GNU Lesser General Public License (as published by the Free
-   * Software Foundation) version 2.1 dated February 1999.
-   *
-   * $Revision$
-   ***********************************************************************EHEADER*/
 
   /******************************************************************************
    *
@@ -218,18 +201,6 @@ extern "C" {
 
 #endif
 
-  /*BHEADER**********************************************************************
-   * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-   * Produced at the Lawrence Livermore National Laboratory.
-   * This file is part of HYPRE.  See file COPYRIGHT for details.
-   *
-   * HYPRE is free software; you can redistribute it and/or modify it under the
-   * terms of the GNU Lesser General Public License (as published by the Free
-   * Software Foundation) version 2.1 dated February 1999.
-   *
-   * $Revision$
-   ***********************************************************************EHEADER*/
-
   /******************************************************************************
    *
    * cgnr (conjugate gradient on the normal equations A^TAx = A^Tb) functions
@@ -381,18 +352,6 @@ extern "C" {
 
 #endif
 
-  /*BHEADER**********************************************************************
-   * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-   * Produced at the Lawrence Livermore National Laboratory.
-   * This file is part of HYPRE.  See file COPYRIGHT for details.
-   *
-   * HYPRE is free software; you can redistribute it and/or modify it under the
-   * terms of the GNU Lesser General Public License (as published by the Free
-   * Software Foundation) version 2.1 dated February 1999.
-   *
-   * $Revision$
-   ***********************************************************************EHEADER*/
-
   /******************************************************************************
    *
    * GMRES gmres
@@ -436,7 +395,7 @@ extern "C" {
 
   typedef struct
   {
-    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location );
+    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location );
     HYPRE_Int    (*Free)          ( void *ptr );
     HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
         HYPRE_Int   *num_procs );
@@ -519,7 +478,7 @@ extern "C" {
 
     hypre_GMRESFunctions *
       hypre_GMRESFunctionsCreate(
-          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location ),
+          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location ),
           HYPRE_Int    (*Free)          ( void *ptr ),
           HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
             HYPRE_Int   *num_procs ),
@@ -552,18 +511,6 @@ extern "C" {
   }
 #endif
 #endif
-
-  /*BHEADER**********************************************************************
-   * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-   * Produced at the Lawrence Livermore National Laboratory.
-   * This file is part of HYPRE.  See file COPYRIGHT for details.
-   *
-   * HYPRE is free software; you can redistribute it and/or modify it under the
-   * terms of the GNU Lesser General Public License (as published by the Free
-   * Software Foundation) version 2.1 dated February 1999.
-   *
-   * $Revision$
-   ***********************************************************************EHEADER*/
 
   /***********KS code ****************/
   /******************************************************************************
@@ -609,7 +556,7 @@ extern "C" {
 
   typedef struct
   {
-    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location );
+    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location );
     HYPRE_Int    (*Free)          ( void *ptr );
     HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
         HYPRE_Int   *num_procs );
@@ -696,7 +643,7 @@ extern "C" {
 
     hypre_COGMRESFunctions *
       hypre_COGMRESFunctionsCreate(
-          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location ),
+          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location ),
           HYPRE_Int    (*Free)          ( void *ptr ),
           HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
             HYPRE_Int   *num_procs ),
@@ -778,7 +725,7 @@ extern "C" {
 
   typedef struct
   {
-    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location );
+    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location );
     HYPRE_Int    (*Free)          ( void *ptr );
     HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
         HYPRE_Int   *num_procs );
@@ -865,7 +812,7 @@ extern "C" {
 
     hypre_LGMRESFunctions *
       hypre_LGMRESFunctionsCreate(
-          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location),
+          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location),
           HYPRE_Int    (*Free)          ( void *ptr ),
           HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
             HYPRE_Int   *num_procs ),
@@ -898,18 +845,6 @@ extern "C" {
   }
 #endif
 #endif
-
-  /*BHEADER**********************************************************************
-   * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-   * Produced at the Lawrence Livermore National Laboratory.
-   * This file is part of HYPRE.  See file COPYRIGHT for details.
-   *
-   * HYPRE is free software; you can redistribute it and/or modify it under the
-   * terms of the GNU Lesser General Public License (as published by the Free
-   * Software Foundation) version 2.1 dated February 1999.
-   *
-   * $Revision$
-   ***********************************************************************EHEADER*/
 
   /******************************************************************************
    *
@@ -951,7 +886,7 @@ extern "C" {
 
   typedef struct
   {
-    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location );
+    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location );
     HYPRE_Int    (*Free)          ( void *ptr );
     HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
         HYPRE_Int   *num_procs );
@@ -1034,7 +969,7 @@ extern "C" {
 
     hypre_FlexGMRESFunctions *
       hypre_FlexGMRESFunctionsCreate(
-          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location ),
+          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location ),
           HYPRE_Int    (*Free)          ( void *ptr ),
           HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
             HYPRE_Int   *num_procs ),
@@ -1067,18 +1002,6 @@ extern "C" {
   }
 #endif
 #endif
-
-  /*BHEADER**********************************************************************
-   * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-   * Produced at the Lawrence Livermore National Laboratory.
-   * This file is part of HYPRE.  See file COPYRIGHT for details.
-   *
-   * HYPRE is free software; you can redistribute it and/or modify it under the
-   * terms of the GNU Lesser General Public License (as published by the Free
-   * Software Foundation) version 2.1 dated February 1999.
-   *
-   * $Revision$
-   ***********************************************************************EHEADER*/
 
   /******************************************************************************
    *
@@ -1123,7 +1046,7 @@ extern "C" {
 
   typedef struct
   {
-    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location );
+    void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location );
     HYPRE_Int    (*Free)          ( void *ptr );
     HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
         HYPRE_Int   *num_procs );
@@ -1240,7 +1163,7 @@ extern "C" {
 
     hypre_PCGFunctions *
       hypre_PCGFunctionsCreate(
-          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_Int location ),
+          void *       (*CAlloc)        ( size_t count, size_t elt_size, HYPRE_MemoryLocation location ),
           HYPRE_Int    (*Free)          ( void *ptr ),
           HYPRE_Int    (*CommInfo)      ( void  *A, HYPRE_Int   *my_id,
             HYPRE_Int   *num_procs ),

@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -17,7 +12,6 @@
  *****************************************************************************/
 #include "HYPRE_config.h"
 #include <stdlib.h>
-#include <assert.h>
 #include <math.h>
 #include <string.h>
 #include "Common.h"
@@ -1064,7 +1058,7 @@ static HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         for (i=0; i<len; i++)
         {
             StoredRowsGet(stored_rows, ind[i], &len2, &ind2, &val2);
-            assert(len2 > 0);
+            hypre_assert(len2 > 0);
 
 #ifdef ESSL
             for (j=0; j<len2; j++)
@@ -1120,7 +1114,7 @@ static HYPRE_Int ComputeValuesSym(StoredRows *stored_rows, Matrix *mat,
         memset(val, 0, len*sizeof(HYPRE_Real));
         NumberingGlobalToLocal(numb, 1, &row, &loc);
         loc = marker[loc];
-        assert(loc != -1);
+        hypre_assert(loc != -1);
         val[loc] = 1.0;
 
         /* Reset marker array */
@@ -1248,7 +1242,7 @@ static HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
         for (i=0; i<len; i++)
         {
             StoredRowsGet(stored_rows, ind[i], &len2, &ind2, &val2);
-            assert(len2 > 0);
+            hypre_assert(len2 > 0);
 
             for (j=0; j<len2; j++)
             {
@@ -1308,7 +1302,7 @@ static HYPRE_Int ComputeValuesNonsym(StoredRows *stored_rows, Matrix *mat,
         memset(bhat, 0, npat*sizeof(HYPRE_Real));
         NumberingGlobalToLocal(numb, 1, &row, &loc);
         loc = marker[loc];
-        assert(loc != -1);
+        hypre_assert(loc != -1);
         bhat[loc] = 1.0;
 
         /* Reset marker array */
@@ -1550,7 +1544,7 @@ static void Rescale(Matrix *M, StoredRows *stored_rows, HYPRE_Int num_ind)
             /* Scatter nonzeros of A */
             for (i=0; i<len2; i++)
             {
-                assert(ind2[i] < num_ind);
+                hypre_assert(ind2[i] < num_ind);
                 w[ind2[i]] = val2[i];
             }
 
@@ -1558,7 +1552,7 @@ static void Rescale(Matrix *M, StoredRows *stored_rows, HYPRE_Int num_ind)
             prod = 0.0;
             for (i=0; i<len; i++)
             {
-                assert(ind[i] < num_ind);
+                hypre_assert(ind[i] < num_ind);
                 prod += val[i] * w[ind[i]];
             }
 

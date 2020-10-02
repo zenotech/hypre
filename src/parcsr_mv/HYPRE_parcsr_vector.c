@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -24,8 +19,8 @@
 
 HYPRE_Int
 HYPRE_ParVectorCreate( MPI_Comm         comm,
-                       HYPRE_Int        global_size, 
-                       HYPRE_Int       *partitioning,
+                       HYPRE_BigInt     global_size, 
+                       HYPRE_BigInt    *partitioning,
                        HYPRE_ParVector *vector )
 {
    if (!vector)
@@ -44,8 +39,8 @@ HYPRE_ParVectorCreate( MPI_Comm         comm,
 
 HYPRE_Int
 HYPRE_ParMultiVectorCreate( MPI_Comm         comm,
-                            HYPRE_Int        global_size, 
-                            HYPRE_Int       *partitioning,
+                            HYPRE_BigInt     global_size, 
+                            HYPRE_BigInt    *partitioning,
                             HYPRE_Int        number_vectors,
                             HYPRE_ParVector *vector )
 {
@@ -211,7 +206,7 @@ HYPRE_ParVectorInnerProd( HYPRE_ParVector x,
 HYPRE_Int
 HYPRE_VectorToParVector( MPI_Comm         comm,
                          HYPRE_Vector     b,
-                         HYPRE_Int       *partitioning,
+                         HYPRE_BigInt    *partitioning,
                          HYPRE_ParVector *vector)
 {
    if (!vector)
@@ -231,7 +226,7 @@ HYPRE_VectorToParVector( MPI_Comm         comm,
 HYPRE_Int
 HYPRE_ParVectorGetValues( HYPRE_ParVector vector,
                           HYPRE_Int       num_values,
-                          HYPRE_Int      *indices,
+                          HYPRE_BigInt   *indices,
                           HYPRE_Complex  *values)
 {
    hypre_ParVector *par_vector = (hypre_ParVector *) vector;

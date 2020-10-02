@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -17,6 +12,7 @@
  *****************************************************************************/
 
 #include "_hypre_struct_mv.h"
+#include "_hypre_struct_mv.hpp"
 
 /*--------------------------------------------------------------------------
  * hypre_StructCopy
@@ -28,16 +24,16 @@ hypre_StructCopy( hypre_StructVector *x,
 {
    hypre_Box       *x_data_box;
    hypre_Box       *y_data_box;
-                   
+
    HYPRE_Complex   *xp;
    HYPRE_Complex   *yp;
-                   
+
    hypre_BoxArray  *boxes;
    hypre_Box       *box;
    hypre_Index      loop_size;
    hypre_IndexRef   start;
    hypre_Index      unit_stride;
-                   
+
    HYPRE_Int        i;
 
    hypre_SetIndex(unit_stride, 1);
@@ -78,7 +74,7 @@ hypre_StructCopy( hypre_StructVector *x,
 
 HYPRE_Int
 hypre_StructPartialCopy( hypre_StructVector  *x,
-                         hypre_StructVector  *y,    
+                         hypre_StructVector  *y,
                          hypre_BoxArrayArray *array_boxes )
 {
    hypre_Box       *x_data_box;

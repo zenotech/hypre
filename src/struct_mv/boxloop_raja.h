@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -23,10 +18,16 @@
 #ifndef HYPRE_NEWBOXLOOP_HEADER
 #define HYPRE_NEWBOXLOOP_HEADER
 
+#ifdef __cplusplus
 extern "C++" {
+#endif
+
 #include <RAJA/RAJA.hpp>
-}
 using namespace RAJA;
+
+#ifdef __cplusplus
+}
+#endif
 
 typedef struct hypre_Boxloop_struct
 {
@@ -43,7 +44,7 @@ typedef struct hypre_Boxloop_struct
 #define hypre_RAJA_DEVICE   RAJA_DEVICE
 #define hypre_raja_exec_policy   cuda_exec<BLOCKSIZE>
 /* #define hypre_raja_reduce_policy cuda_reduce_atomic<BLOCKSIZE> */
-#define hypre_raja_reduce_policy cuda_reduce<BLOCKSIZE>
+#define hypre_raja_reduce_policy cuda_reduce //<BLOCKSIZE>
 #define hypre_fence()
 /*
 #define hypre_fence() \
@@ -60,14 +61,14 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
 
 #elif defined(HYPRE_USING_OPENMP) /* RAJA with OpenMP, running on host (CPU) */
 
-#define hypre_RAJA_DEVICE 
+#define hypre_RAJA_DEVICE
 #define hypre_raja_exec_policy   omp_for_exec
 #define hypre_raja_reduce_policy omp_reduce
-#define hypre_fence() 
+#define hypre_fence()
 
 #else /* RAJA, running on host (CPU) */
 
-#define hypre_RAJA_DEVICE 
+#define hypre_RAJA_DEVICE
 #define hypre_raja_exec_policy   seq_exec
 #define hypre_raja_reduce_policy seq_reduce
 #define hypre_fence()
@@ -160,12 +161,12 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
        zypre_newBoxLoopDeclare(databox1);                                                          \
        zypre_BoxLoopIncK(1,databox1,i1);
 
-      
+
 #define zypre_newBoxLoop1End(i1) \
     });                          \
     hypre_fence();               \
 }
-        
+
 #define zypre_newBoxLoop2Begin(ndim, loop_size,                                                  \
                                dbox1, start1, stride1, i1,                                       \
                                dbox2, start2, stride2, i2)                                       \
@@ -264,7 +265,7 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
       databox##k.bstart2  = 0;                                                \
       databox##k.bsize2   = 0;                                                \
    }
-        
+
 #define zypre_newBasicBoxLoop2Begin(ndim, loop_size,                                               \
                                     stride1, i1,                                                   \
                                     stride2, i2)                                                   \
@@ -288,15 +289,11 @@ hypre_CheckErrorDevice(cudaDeviceSynchronize());
    hypre_fence();                                                              \
 }
 
-#define zypre_newBoxLoopSetOneBlock()
-
 #define hypre_newBoxLoopGetIndex(index)                                        \
   index[0] = hypre_IndexD(local_idx, 0);                                       \
   index[1] = hypre_IndexD(local_idx, 1);                                       \
   index[2] = hypre_IndexD(local_idx, 2);
 
-#define hypre_BoxLoopGetIndex    zypre_BoxLoopGetIndex
-#define hypre_BoxLoopSetOneBlock zypre_newBoxLoopSetOneBlock
 #define hypre_BoxLoopBlock()       0
 #define hypre_BoxLoop0Begin      zypre_newBoxLoop0Begin
 #define hypre_BoxLoop0For        zypre_newBoxLoop0For

@@ -1,14 +1,7 @@
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 default:all
 
@@ -44,7 +37,7 @@ F77_COMPILE_FLAGS = \
  -I${HYPRE_BUILD_DIR}/include\
  ${CINCLUDES}
 
-MPILIBFLAGS = ${MPILIBDIRS} ${MPILIBS} ${MPIFLAGS} 
+MPILIBFLAGS = ${MPILIBDIRS} ${MPILIBS} ${MPIFLAGS}
 LAPACKLIBFLAGS = ${LAPACKLIBDIRS} ${LAPACKLIBS}
 BLASLIBFLAGS = ${BLASLIBDIRS} ${BLASLIBS}
 LIBFLAGS = ${LDFLAGS} ${LIBS}
@@ -71,6 +64,7 @@ LFLAGS =\
 
 HYPRE_DRIVERS =\
  ij.c\
+ ij_assembly.c\
  sstruct.c\
  struct.c\
  ams_driver.c\
@@ -81,7 +75,6 @@ HYPRE_DRIVERS =\
  zboxloop.c
 
 HYPRE_DRIVERS_CXX =\
- fei.cxx\
  cxx_ij.cxx\
  cxx_sstruct.cxx\
  cxx_struct.cxx
@@ -112,7 +105,7 @@ all++: ${HYPRE_DRIVER_CXX_EXECS}
 install:
 
 clean:
-	rm -f *.o
+	rm -f *.o*
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean
@@ -138,47 +131,69 @@ distclean: clean
 # Rules
 ##################################################################
 
+ifeq ($(CUCC), )
+   OBJ_SUFFIX=o
+else
+   OBJ_SUFFIX=obj
+endif
+
 # C
 
-ij: ij.o
+ij: ij.${OBJ_SUFFIX}
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
-sstruct: sstruct.o
+ij_assembly: ij_assembly.${OBJ_SUFFIX}
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
-struct: struct.o
+sstruct: sstruct.${OBJ_SUFFIX}
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
+
+struct: struct.${OBJ_SUFFIX}
+	@echo  "Building" $@ "... "
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
 ams_driver: ams_driver.o
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
-maxwell_unscaled: maxwell_unscaled.o
+maxwell_unscaled: maxwell_unscaled.${OBJ_SUFFIX}
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
-struct_migrate: struct_migrate.o
+struct_migrate: struct_migrate.${OBJ_SUFFIX}
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
-sstruct_fac: sstruct_fac.o
+sstruct_fac: sstruct_fac.${OBJ_SUFFIX}
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
 ij_mv: ij_mv.o
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
-zboxloop: zboxloop.o
+ij_device: ij_device.${OBJ_SUFFIX}
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
+
+ij_mm: ij_mm.${OBJ_SUFFIX}
+	@echo  "Building" $@ "... "
+	${LINK_CC} -o $@ $< ${LFLAGS}
+
+zboxloop: zboxloop.${OBJ_SUFFIX}
+	@echo  "Building" $@ "... "
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
 struct_newboxloop: struct_newboxloop.o $(KOKKOS_LINK_DEPENDS)
 	@echo  "Building" $@ "... "
-	${LINK_CC} -o $@ $@.o ${LFLAGS}
+	${LINK_CC} -o $@ $< ${LFLAGS}
+
+test_mgr: test_mgr.o
+	@echo  "Building" $@ "... "
+	${LINK_CC} -o $@ $< ${LFLAGS}
 
 # RDF: Keep these for now
 
@@ -277,7 +292,7 @@ fparcsr_mv: fparcsr_mv.f
 	@echo  "Building" $@ "... "
 	${LINK_FC} -c $@
 
-fsstruct_ls: fsstruct_ls.f 
+fsstruct_ls: fsstruct_ls.f
 	@echo  "Building" $@ "... "
 	${LINK_FC} -c $@
 
@@ -292,4 +307,3 @@ fstruct_ls: fstruct_ls.f
 fstruct_mv: fstruct_mv.f
 	@echo  "Building" $@ "... "
 	${LINK_FC} -c $@
-

@@ -1,14 +1,7 @@
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 include ../config/Makefile.config
 
@@ -18,9 +11,11 @@ CDEFS = ${TIMERDEFS}
 C_COMPILE_FLAGS =\
    -I..\
    -I$(srcdir)/..\
+   -I$(srcdir)/../struct_mv\
    -I$(srcdir)\
    ${CINCLUDES}\
    ${CDEFS}
+
 CXX_COMPILE_FLAGS = ${C_COMPILE_FLAGS}
 
 HEADERS =\
@@ -28,7 +23,7 @@ HEADERS =\
  exchange_data.h\
  fortran.h\
  fortran_matrix.h\
- general.h\
+ hypre_general.h\
  hypre_memory.h\
  HYPRE_utilities.h\
  mpistubs.h\
@@ -37,6 +32,8 @@ HEADERS =\
  _hypre_utilities.h
 
 FILES =\
+ F90_HYPRE_error.c\
+ F90_HYPRE_general.c\
  HYPRE_version.c\
  amg_linklist.c\
  binsearch.c\
@@ -44,7 +41,11 @@ FILES =\
  fortran_matrix.c\
  hypre_ap.c\
  hypre_complex.c\
- hypre_memory.c\
+ hypre_error.c\
+ hypre_hopscotch_hash.c\
+ hypre_merge_sort.c\
+ hypre_mpi_comm_f2c.c\
+ hypre_prefix_sum.c\
  hypre_printf.c\
  hypre_qsort.c\
  mpistubs.c\
@@ -52,19 +53,18 @@ FILES =\
  random.c\
  threading.c\
  timer.c\
- timing.c\
- hypre_mpi_comm_f2c.c\
- hypre_error.c\
- F90_HYPRE_error.c\
- hypre_prefix_sum.c\
- hypre_merge_sort.c\
- hypre_hopscotch_hash.c\
- gpuErrorCheck.c\
- gpuMem.c\
- hypre_general.c\
- hypre_reducesum.c
+ timing.c
 
-OBJS = ${FILES:.c=.o}
+CUFILES=\
+ hypre_cuda_utils.c\
+ hypre_general.c\
+ hypre_memory.c\
+ hypre_omp_device.c \
+ hypre_nvtx.c
+
+COBJS = ${FILES:.c=.o}
+CUOBJS = ${CUFILES:.c=.obj}
+OBJS = ${COBJS} ${CUOBJS}
 
 SONAME = libHYPRE_utilities-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
 
@@ -75,6 +75,7 @@ SONAME = libHYPRE_utilities-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
 all: libHYPRE_utilities${HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/_hypre_utilities.h $(HYPRE_BUILD_DIR)/include
+	cp -fR $(srcdir)/_hypre_utilities.hpp $(HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/hypre_hopscotch_hash.h $(HYPRE_BUILD_DIR)/include
 	cp -fR $(srcdir)/fortran*.h $(HYPRE_BUILD_DIR)/include
 #	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
@@ -86,7 +87,7 @@ install: libHYPRE_utilities${HYPRE_LIB_SUFFIX}
 #	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
 
 clean:
-	rm -f *.o libHYPRE*
+	rm -f *.o* libHYPRE*
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean

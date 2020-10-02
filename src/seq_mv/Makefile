@@ -1,20 +1,9 @@
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
-
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 include ../config/Makefile.config
-
-#FILES_NVCC = gpukernels.cu
-#include $(HYPRE_NVCC_MAKEFILE)
 
 CINCLUDES = ${INCLUDES} ${MPIINCLUDE}
 
@@ -24,8 +13,6 @@ C_COMPILE_FLAGS =\
  -I$(srcdir)/..\
  -I$(srcdir)/../utilities\
  ${CINCLUDES}
-
-CU_COMPILE_FLAGS = ${C_COMPILE_FLAGS}
 
 HEADERS =\
  csr_matrix.h\
@@ -46,12 +33,26 @@ FILES =\
  HYPRE_vector.c\
  mapped_matrix.c\
  multiblock_matrix.c\
- vector.c\
- csr_matvec_oomp.c\
- gpukernels.c
+ vector_batched.c
 
-OBJS = ${FILES:.c=.o}
-#CUOBJS = ${FILES_NVCC:.cu=.o}
+CUFILES =\
+ csr_matop_device.c\
+ csr_matvec_device.c\
+ csr_matvec_oomp.c\
+ csr_spadd_device.c\
+ csr_spgemm_device.c\
+ csr_spgemm_device_attempt.c\
+ csr_spgemm_device_confident.c\
+ csr_spgemm_device_cusparse.c\
+ csr_spgemm_device_rowbound.c\
+ csr_spgemm_device_rowest.c\
+ csr_spgemm_device_util.c\
+ csr_sptrans_device.c\
+ vector.c
+
+COBJS = ${FILES:.c=.o}
+CUOBJS = ${CUFILES:.c=.obj}
+OBJS = ${COBJS} ${CUOBJS}
 
 SONAME = libHYPRE_seq_mv-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
 
@@ -70,7 +71,7 @@ install: libHYPRE_seq_mv${HYPRE_LIB_SUFFIX}
 #	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
 
 clean:
-	rm -f *.o libHYPRE*
+	rm -f *.o* libHYPRE*
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean
@@ -79,12 +80,12 @@ distclean: clean
 # Rules
 ##################################################################
 
-libHYPRE_seq_mv.a: ${OBJS} ${CUOBJS}
+libHYPRE_seq_mv.a: ${OBJS}
 	@echo  "Building $@ ... "
 	${AR} $@ ${OBJS}
 	${RANLIB} $@
 
-libHYPRE_seq_mv.so libHYPRE_seq_mv.dylib: ${OBJS} ${CUOBJS}
+libHYPRE_seq_mv.so libHYPRE_seq_mv.dylib: ${OBJS}
 	@echo  "Building $@ ... "
 	${BUILD_CC_SHARED} -o ${SONAME} ${OBJS} ${SHARED_SET_SONAME}${SONAME}
 	ln -s ${SONAME} $@

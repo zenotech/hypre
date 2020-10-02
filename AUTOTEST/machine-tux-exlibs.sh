@@ -1,15 +1,8 @@
 #!/bin/sh
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 testname=`basename $0 .sh`
 
@@ -56,7 +49,7 @@ co="--enable-debug --with-mli --with-superlu --with-superlu-include=/home/falgou
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo
 ./renametest.sh basic $output_dir/basic-superlu
 
-co="--enable-debug --with-mli --with-superlu --with-superlu-include=/home/falgout2/codes/superlu/SuperLU_5.2.1/SRC --with-dsuperlu --with-dsuperlu-include=/home/falgout2/codes/superlu/SuperLU_DIST_5.2.1/SRC --with-blas-lib=\\'-L/home/falgout2/codes/blas/BLAS-3.7.1 -lblas -lgfortran\\' --with-dsuperlu-lib=\\'-L/home/falgout2/codes/superlu/SuperLU_DIST_5.2.1/lib -lsuperlu_dist -L/home/falgout2/codes/parmetis/parmetis-4.0.3/build/Linux-x86_64/libparmetis -lparmetis -L/home/falgout2/codes/parmetis/parmetis-4.0.3/build/Linux-x86_64/libmetis -lmetis\\'"
+co="--enable-debug --with-mli --with-superlu --with-superlu-include=/home/falgout2/codes/superlu/SuperLU_5.2.1/SRC --with-dsuperlu --with-dsuperlu-include=/home/falgout2/codes/superlu/superlu_dist-6.3.1/SRC --with-blas-lib=\\'-L/home/falgout2/codes/blas/BLAS-3.7.1 -lblas -lgfortran\\' --with-dsuperlu-lib=\\'-L/home/falgout2/codes/superlu/superlu_dist-6.3.1/lib -lsuperlu_dist -L/home/falgout2/codes/parmetis/parmetis-4.0.3/build/Linux-x86_64/libparmetis -lparmetis -L/home/falgout2/codes/parmetis/parmetis-4.0.3/build/Linux-x86_64/libmetis -lmetis -lstdc++\\'"
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo -ro: $ro
 ./renametest.sh basic $output_dir/basic-dsuperlu
 

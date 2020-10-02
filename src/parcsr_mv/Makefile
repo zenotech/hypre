@@ -1,15 +1,7 @@
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
-
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 include ../config/Makefile.config
 
@@ -43,6 +35,7 @@ FILES =\
  F90_par_vector.c\
  HYPRE_parcsr_matrix.c\
  HYPRE_parcsr_vector.c\
+ gen_fffc.c\
  new_commpkg.c\
  numbers.c\
  par_csr_aat.c\
@@ -53,9 +46,15 @@ FILES =\
  par_csr_matop.c\
  par_csr_matrix.c\
  par_csr_matop_marked.c\
- par_csr_matvec.c\
+ par_csr_triplemat.c\
  par_vector.c\
  par_make_system.c
+
+CUFILES =\
+ par_csr_matvec.c\
+ par_csr_fffc_device.c\
+ par_csr_matop_device.c\
+ par_csr_triplemat_device.c
 
 EXTRA_FILES =\
  parchord_to_parcsr.c
@@ -70,7 +69,10 @@ DRIVER_FILES =\
  driver_matvec.c\
  driver_multivec.c
 
-OBJS = ${FILES:.c=.o}
+COBJS = ${FILES:.c=.o}
+CUOBJS = ${CUFILES:.c=.obj}
+OBJS = ${COBJS} ${CUOBJS}
+
 DRIVER_OBJS = ${DRIVER_FILES:.c=.o}
 
 SONAME = libHYPRE_parcsr_mv-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
@@ -84,29 +86,29 @@ all: libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/_hypre_parcsr_mv.h $(HYPRE_BUILD_DIR)/include
 #	cp -fR libHYPRE* $(HYPRE_BUILD_DIR)/lib
 
-driver: driver.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX} 
+driver: driver.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
-	${CC} -o driver driver.o ${LFLAGS} 
+	${CC} -o driver driver.o ${LFLAGS}
 
 driver_matvec: driver_matvec.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
-	${CC} -o driver_matvec driver_matvec.o ${LFLAGS} 
+	${CC} -o driver_matvec driver_matvec.o ${LFLAGS}
 
 driver_matmul: driver_matmul.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
-	${CC} -o driver_matmul driver_matmul.o ${LFLAGS} 
+	${CC} -o driver_matmul driver_matmul.o ${LFLAGS}
 
 driver_boolmatmul: driver_boolmatmul.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
-	${CC} -o driver_boolmatmul driver_boolmatmul.o ${LFLAGS} 
+	${CC} -o driver_boolmatmul driver_boolmatmul.o ${LFLAGS}
 
 driver_aat: driver_aat.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
-	${CC} -o driver_aat driver_aat.o ${LFLAGS} 
+	${CC} -o driver_aat driver_aat.o ${LFLAGS}
 
 driver_boolaat: driver_boolaat.o libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	@echo  "Linking" $@ "... "
-	${CC} -o driver_boolaat driver_boolaat.o ${LFLAGS} 
+	${CC} -o driver_boolaat driver_boolaat.o ${LFLAGS}
 
 install: libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 	cp -fR $(srcdir)/HYPRE_*.h $(HYPRE_INC_INSTALL)
@@ -114,7 +116,7 @@ install: libHYPRE_parcsr_mv${HYPRE_LIB_SUFFIX}
 #	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
 
 clean:
-	rm -f *.o libHYPRE*
+	rm -f *.o* libHYPRE*
 	rm -f driver driver_matvec driver_matmul
 	rm -rf pchdir tca.map *inslog*
 

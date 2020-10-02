@@ -1,19 +1,14 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 /******************************************************************************
  * Definitions of ParCSR Fortran interface routines
  *****************************************************************************/
@@ -86,7 +81,7 @@ extern void hypre_F90_NAME(fhypre_csrmatrixtoparcsrmatrix, FHYPRE_CSRMATRIXTOPAR
 #define HYPRE_ParCSRMatrixMatvec  \
         hypre_F90_NAME(fhypre_parcsrmatrixmatvec, FHYPRE_PARCSRMATRIXMATVEC)
 extern void hypre_F90_NAME(fhypre_parcsrmatrixmatvec, FHYPRE_PARCSRMATRIXMATVEC)
-                      (HYPRE_Real *, hypre_F90_Obj *, hypre_F90_Obj *, HYPRE_Real *, hypre_F90_Obj *);  
+                      (HYPRE_Real *, hypre_F90_Obj *, hypre_F90_Obj *, HYPRE_Real *, hypre_F90_Obj *);
 
 #define HYPRE_ParCSRMatrixMatvecT  \
         hypre_F90_NAME(fhypre_parcsrmatrixmatvect, FHYPRE_PARCSRMATRIXMATVECT)
@@ -224,6 +219,16 @@ extern void hypre_F90_NAME(fhypre_boomeramgsetmaxlevels, FHYPRE_BOOMERAMGSETMAXL
         hypre_F90_NAME(fhypre_boomeramggetmaxlevels, FHYPRE_BOOMERAMGGETMAXLEVELS)
 extern void hypre_F90_NAME(fhypre_boomeramggetmaxlevels, FHYPRE_BOOMERAMGGETMAXLEVELS)
                       (hypre_F90_Obj *, HYPRE_Int *);
+
+#define HYPRE_BoomerAMGSetCoarsenCutFactor  \
+        hypre_F90_NAME(fhypre_boomeramgsetcoarsencutfa, FHYPRE_BOOMERAMGSETCOARSENCUTFAC)
+extern void hypre_F90_NAME(fhypre_boomeramgsetcoarsencutfa, FHYPRE_BOOMERAMGSETCOARSENCUTFAC)
+                      (hypre_F90_Obj *, HYPRE_Real *);
+
+#define HYPRE_BoomerAMGGetCoarsenCutFactor  \
+        hypre_F90_NAME(fhypre_boomeramggetcoarsencutfa, FHYPRE_BOOMERAMGGETCOARSENCUTFAC)
+extern void hypre_F90_NAME(fhypre_boomeramggetcoarsencutfa, FHYPRE_BOOMERAMGGETCOARSENCUTFAC)
+                      (hypre_F90_Obj *, HYPRE_Real *);
 
 #define HYPRE_BoomerAMGSetStrongThreshold  \
         hypre_F90_NAME(fhypre_boomeramgsetstrongthrshl, FHYPRE_BOOMERAMGSETSTRONGTHRSHL)

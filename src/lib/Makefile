@@ -1,47 +1,31 @@
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 include ../config/Makefile.config
 
-CINCLUDES = ${INCLUDES} ${MPIINCLUDE}
-
-C_COMPILE_FLAGS =\
- -I..\
- -I$(srcdir)\
- -I$(srcdir)/..\
- -I$(srcdir)/../utilities\
- ${CINCLUDES}
-
 FEIHYPREFILES = ${HYPRE_FEI_HYPRE_FILES}
 FEMLIFILES = ${HYPRE_FEI_FEMLI_FILES}
-IJMVFILES = ${HYPRE_SRC_TOP_DIR}/IJ_mv/*.o
-EUCLIDFILES = ${HYPRE_SRC_TOP_DIR}/distributed_ls/Euclid/*.o
-PARASAILSFILES = ${HYPRE_SRC_TOP_DIR}/distributed_ls/ParaSails/*.o
-PILUTFILES = ${HYPRE_SRC_TOP_DIR}/distributed_ls/pilut/*.o
-DISTMATRIXFILES = ${HYPRE_SRC_TOP_DIR}/distributed_matrix/*.o
-KRYLOVFILES = ${HYPRE_SRC_TOP_DIR}/krylov/*.o
-MATMATFILES = ${HYPRE_SRC_TOP_DIR}/matrix_matrix/*.o
-MULTIVECFILES = ${HYPRE_SRC_TOP_DIR}/multivector/*.o
-PARCSRLSFILES = ${HYPRE_SRC_TOP_DIR}/parcsr_ls/*.o
-PARCSRMVFILES = ${HYPRE_SRC_TOP_DIR}/parcsr_mv/*.o
-PARCSRBLOCKMVFILES = ${HYPRE_SRC_TOP_DIR}/parcsr_block_mv/*.o
-SEQMVFILES = ${HYPRE_SRC_TOP_DIR}/seq_mv/*.o
-SSTRUCTLSFILES = ${HYPRE_SRC_TOP_DIR}/sstruct_ls/*.o
-SSTRUCTMVFILES = ${HYPRE_SRC_TOP_DIR}/sstruct_mv/*.o
-STRUCTLSFILES = ${HYPRE_SRC_TOP_DIR}/struct_ls/*.o
-STRUCTMVFILES = ${HYPRE_SRC_TOP_DIR}/struct_mv/*.o
-UTILITIESFILES = ${HYPRE_SRC_TOP_DIR}/utilities/*.o
-BLASFILES = ${HYPRE_SRC_TOP_DIR}/blas/*.o
-LAPACKFILES = ${HYPRE_SRC_TOP_DIR}/lapack/*.o
+IJMVFILES = ${HYPRE_SRC_TOP_DIR}/IJ_mv/*.o*
+EUCLIDFILES = ${HYPRE_EUCLID_FILES}
+PARASAILSFILES = ${HYPRE_PARASAILS_FILES}
+PILUTFILES = ${HYPRE_PILUT_FILES}
+DISTMATRIXFILES = ${HYPRE_SRC_TOP_DIR}/distributed_matrix/*.o*
+KRYLOVFILES = ${HYPRE_SRC_TOP_DIR}/krylov/*.o*
+MATMATFILES = ${HYPRE_SRC_TOP_DIR}/matrix_matrix/*.o*
+MULTIVECFILES = ${HYPRE_SRC_TOP_DIR}/multivector/*.o*
+PARCSRLSFILES = ${HYPRE_SRC_TOP_DIR}/parcsr_ls/*.o*
+PARCSRMVFILES = ${HYPRE_SRC_TOP_DIR}/parcsr_mv/*.o*
+PARCSRBLOCKMVFILES = ${HYPRE_SRC_TOP_DIR}/parcsr_block_mv/*.o*
+SEQMVFILES = ${HYPRE_SRC_TOP_DIR}/seq_mv/*.o*
+SSTRUCTLSFILES = ${HYPRE_SRC_TOP_DIR}/sstruct_ls/*.o*
+SSTRUCTMVFILES = ${HYPRE_SRC_TOP_DIR}/sstruct_mv/*.o*
+STRUCTLSFILES = ${HYPRE_SRC_TOP_DIR}/struct_ls/*.o*
+STRUCTMVFILES = ${HYPRE_SRC_TOP_DIR}/struct_mv/*.o*
+UTILITIESFILES = ${HYPRE_SRC_TOP_DIR}/utilities/*.o*
+BLASFILES = ${HYPRE_SRC_TOP_DIR}/blas/*.o*
+LAPACKFILES = ${HYPRE_SRC_TOP_DIR}/lapack/*.o*
 
 FILES_HYPRE = \
 $(FEIHYPREFILES)\
@@ -67,7 +51,7 @@ $(BLASFILES)\
 $(LAPACKFILES)
 
 SONAME = libHYPRE-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
-SOLIBS = ${MPILIBDIRS} ${MPILIBS} ${LAPACKLIBDIRS} ${LAPACKLIBS}\
+SOLIBS = ${DSUPERLU_LIBS} ${MPILIBDIRS} ${MPILIBS} ${LAPACKLIBDIRS} ${LAPACKLIBS}\
  ${BLASLIBDIRS} ${BLASLIBS} ${LIBS} ${FLIBS}
 
 
@@ -95,13 +79,14 @@ distclean: clean
 # Rules
 ##################################################################
 
+# NOTE: Some of the FILES symbols below can be empty, so they are listed on an
+# AR line with at least one nonempty symbol
 libHYPRE.a: HYPRE_buildinfo.o
+libHYPRE.a: ${FILES_HYPRE}
 	@echo  "Building libHYPRE ... "
+	rm -f $@
 	${AR} $@ $(FEIHYPREFILES) $(FEMLIFILES) $(IJMVFILES)
-	${AR} $@ $(EUCLIDFILES)
-	${AR} $@ $(PARASAILSFILES)
-	${AR} $@ $(PILUTFILES)
-	${AR} $@ $(DISTMATRIXFILES)
+	${AR} $@ $(EUCLIDFILES) $(PARASAILSFILES) $(PILUTFILES) $(DISTMATRIXFILES)
 	${AR} $@ $(KRYLOVFILES)
 	${AR} $@ $(MATMATFILES)
 	${AR} $@ $(MULTIVECFILES)

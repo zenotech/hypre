@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #include "_hypre_struct_ls.h"
 #include "smg.h"
@@ -82,9 +77,9 @@ hypre_SMGSolve( void               *smg_vdata,
 
    HYPRE_Real            b_dot_b = 0, r_dot_r, eps = 0;
    HYPRE_Real            e_dot_e = 0, x_dot_x = 1;
-                    
+
    HYPRE_Int             i, l;
-                    
+
 #if DEBUG
    char                  filename[255];
 #endif
@@ -93,7 +88,7 @@ hypre_SMGSolve( void               *smg_vdata,
     * Initialize some things and deal with special cases
     *-----------------------------------------------------*/
 
-   HYPRE_ANNOTATION_BEGIN("SMG.solve");
+   HYPRE_ANNOTATE_FUNC_BEGIN;
    hypre_BeginTiming(smg_data -> time_index);
 
    hypre_StructMatrixDestroy(A_l[0]);
@@ -115,7 +110,7 @@ hypre_SMGSolve( void               *smg_vdata,
       }
 
       hypre_EndTiming(smg_data -> time_index);
-      HYPRE_ANNOTATION_END("SMG.solve");
+      HYPRE_ANNOTATE_FUNC_END;
 
       return hypre_error_flag;
    }
@@ -138,7 +133,7 @@ hypre_SMGSolve( void               *smg_vdata,
          }
 
          hypre_EndTiming(smg_data -> time_index);
-         HYPRE_ANNOTATION_END("SMG.solve");
+         HYPRE_ANNOTATE_FUNC_END;
 
          return hypre_error_flag;
       }
@@ -224,7 +219,7 @@ hypre_SMGSolve( void               *smg_vdata,
             /* compute residual (b - Ax) */
             hypre_SMGResidual(residual_data_l[l],
                               A_l[l], x_l[l], b_l[l], r_l[l]);
- 
+
             /* restrict residual */
             hypre_SemiRestrict(restrict_data_l[l], R_l[l], r_l[l], b_l[l+1]);
 #if DEBUG
@@ -277,7 +272,7 @@ hypre_SMGSolve( void               *smg_vdata,
             hypre_SMGRelaxSetRegSpaceRank(relax_data_l[l], 1, 0);
             hypre_SMGRelaxSetMaxIter(relax_data_l[l], num_post_relax);
             hypre_SMGRelaxSetZeroGuess(relax_data_l[l], 0);
-            hypre_SMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]); 
+            hypre_SMGRelax(relax_data_l[l], A_l[l], b_l[l], x_l[l]);
          }
 
          /* interpolate error and correct on fine grid (x = x + Pe_c) */
@@ -323,7 +318,7 @@ hypre_SMGSolve( void               *smg_vdata,
    }
 
    hypre_EndTiming(smg_data -> time_index);
-   HYPRE_ANNOTATION_END("SMG.solve");
+   HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }

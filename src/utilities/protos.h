@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /* amg_linklist.c */
 void hypre_dispose_elt ( hypre_LinkList element_ptr );
@@ -18,8 +13,10 @@ void hypre_enter_on_lists ( hypre_LinkList *LoL_head_ptr , hypre_LinkList *LoL_t
 
 /* binsearch.c */
 HYPRE_Int hypre_BinarySearch ( HYPRE_Int *list , HYPRE_Int value , HYPRE_Int list_length );
+HYPRE_Int hypre_BigBinarySearch ( HYPRE_BigInt *list , HYPRE_BigInt value , HYPRE_Int list_length );
 HYPRE_Int hypre_BinarySearch2 ( HYPRE_Int *list , HYPRE_Int value , HYPRE_Int low , HYPRE_Int high , HYPRE_Int *spot );
 HYPRE_Int *hypre_LowerBound( HYPRE_Int *first, HYPRE_Int *last, HYPRE_Int value );
+HYPRE_BigInt *hypre_BigLowerBound( HYPRE_BigInt *first, HYPRE_BigInt *last, HYPRE_BigInt value );
 
 /* hypre_complex.c */
 #ifdef HYPRE_COMPLEX
@@ -35,42 +32,47 @@ HYPRE_Real    hypre_cimag( HYPRE_Complex value );
 #endif
 
 /* hypre_general.c */
-void HYPRE_Init( hypre_int argc, char *argv[] );
-void HYPRE_Finalize();
-
-/* hypre_printf.c */
-// #ifdef HYPRE_BIGINT
-HYPRE_Int hypre_printf( const char *format , ... );
-HYPRE_Int hypre_fprintf( FILE *stream , const char *format, ... );
-HYPRE_Int hypre_sprintf( char *s , const char *format, ... );
-HYPRE_Int hypre_scanf( const char *format , ... );
-HYPRE_Int hypre_fscanf( FILE *stream , const char *format, ... );
-HYPRE_Int hypre_sscanf( char *s , const char *format, ... );
-// #else
-// #define hypre_printf  printf
-// #define hypre_fprintf fprintf
-// #define hypre_sprintf sprintf
-// #define hypre_scanf   scanf
-// #define hypre_fscanf  fscanf
-// #define hypre_sscanf  sscanf
-// #endif
+hypre_Handle* hypre_handle();
+hypre_Handle* hypre_HandleCreate();
+HYPRE_Int hypre_HandleDestroy(hypre_Handle *hypre_handle_);
+HYPRE_Int HYPRE_Init();
+HYPRE_Int HYPRE_Finalize();
+HYPRE_Int hypre_SetDevice(HYPRE_Int use_device, hypre_Handle *hypre_handle_);
 
 /* hypre_qsort.c */
 void hypre_swap ( HYPRE_Int *v , HYPRE_Int i , HYPRE_Int j );
 void hypre_swap2 ( HYPRE_Int *v , HYPRE_Real *w , HYPRE_Int i , HYPRE_Int j );
+void hypre_BigSwap2 ( HYPRE_BigInt *v , HYPRE_Real *w , HYPRE_Int i , HYPRE_Int j );
 void hypre_swap2i ( HYPRE_Int *v , HYPRE_Int *w , HYPRE_Int i , HYPRE_Int j );
+void hypre_BigSwap2i ( HYPRE_BigInt *v , HYPRE_Int *w , HYPRE_Int i , HYPRE_Int j );
 void hypre_swap3i ( HYPRE_Int *v , HYPRE_Int *w , HYPRE_Int *z , HYPRE_Int i , HYPRE_Int j );
 void hypre_swap3_d ( HYPRE_Real *v , HYPRE_Int *w , HYPRE_Int *z , HYPRE_Int i , HYPRE_Int j );
-void hypre_swap4_d ( HYPRE_Real *v , HYPRE_Int *w , HYPRE_Int *z , HYPRE_Int *y , HYPRE_Int i , HYPRE_Int j );
+void hypre_swap3_d_perm(HYPRE_Int  *v, HYPRE_Real  *w, HYPRE_Int  *z, HYPRE_Int  i, HYPRE_Int  j );
+void hypre_BigSwap4_d ( HYPRE_Real *v , HYPRE_BigInt *w , HYPRE_Int *z , HYPRE_Int *y , HYPRE_Int i , HYPRE_Int j );
 void hypre_swap_d ( HYPRE_Real *v , HYPRE_Int i , HYPRE_Int j );
 void hypre_qsort0 ( HYPRE_Int *v , HYPRE_Int left , HYPRE_Int right );
 void hypre_qsort1 ( HYPRE_Int *v , HYPRE_Real *w , HYPRE_Int left , HYPRE_Int right );
+void hypre_BigQsort1 ( HYPRE_BigInt *v , HYPRE_Real *w , HYPRE_Int left , HYPRE_Int right );
 void hypre_qsort2i ( HYPRE_Int *v , HYPRE_Int *w , HYPRE_Int left , HYPRE_Int right );
+void hypre_BigQsort2i( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int  left, HYPRE_Int  right );
 void hypre_qsort2 ( HYPRE_Int *v , HYPRE_Real *w , HYPRE_Int left , HYPRE_Int right );
+void hypre_qsort2_abs ( HYPRE_Int *v , HYPRE_Real *w , HYPRE_Int left , HYPRE_Int right );
 void hypre_qsort3i ( HYPRE_Int *v , HYPRE_Int *w , HYPRE_Int *z , HYPRE_Int left , HYPRE_Int right );
+void hypre_qsort3ir ( HYPRE_Int *v , HYPRE_Real *w , HYPRE_Int *z , HYPRE_Int left , HYPRE_Int right );
+void hypre_qsort3( HYPRE_Real *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int  left, HYPRE_Int  right );
 void hypre_qsort3_abs ( HYPRE_Real *v , HYPRE_Int *w , HYPRE_Int *z , HYPRE_Int left , HYPRE_Int right );
-void hypre_qsort4_abs ( HYPRE_Real *v , HYPRE_Int *w , HYPRE_Int *z , HYPRE_Int *y , HYPRE_Int left , HYPRE_Int right );
+void hypre_BigQsort4_abs ( HYPRE_Real *v , HYPRE_BigInt *w , HYPRE_Int *z , HYPRE_Int *y , HYPRE_Int left , HYPRE_Int right );
 void hypre_qsort_abs ( HYPRE_Real *w , HYPRE_Int left , HYPRE_Int right );
+void hypre_BigSwapbi(HYPRE_BigInt  *v, HYPRE_Int  *w, HYPRE_Int  i, HYPRE_Int  j );
+void hypre_BigQsortbi( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int  left, HYPRE_Int  right );
+void hypre_BigSwapLoc(HYPRE_BigInt  *v, HYPRE_Int  *w, HYPRE_Int  i, HYPRE_Int  j );
+void hypre_BigQsortbLoc( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int  left, HYPRE_Int  right );
+void hypre_BigSwapb2i(HYPRE_BigInt  *v, HYPRE_Int  *w, HYPRE_Int  *z, HYPRE_Int  i, HYPRE_Int  j );
+void hypre_BigQsortb2i( HYPRE_BigInt *v, HYPRE_Int *w, HYPRE_Int *z, HYPRE_Int  left, HYPRE_Int  right );
+void hypre_BigSwap( HYPRE_BigInt *v, HYPRE_Int  i, HYPRE_Int  j );
+void hypre_BigQsort0( HYPRE_BigInt *v, HYPRE_Int  left, HYPRE_Int  right );
+void hypre_topo_sort(const HYPRE_Int *row_ptr, const HYPRE_Int *col_inds, const HYPRE_Complex *data, HYPRE_Int *ordering, HYPRE_Int n);
+void hypre_dense_topo_sort(const HYPRE_Complex *L, HYPRE_Int *ordering, HYPRE_Int n, HYPRE_Int is_col_major);
 
 /* qsplit.c */
 HYPRE_Int hypre_DoubleQuickSplit ( HYPRE_Real *values , HYPRE_Int *indices , HYPRE_Int list_length , HYPRE_Int NumberKept );
@@ -117,37 +119,13 @@ void hypre_prefix_sum_triple(HYPRE_Int *in_out1, HYPRE_Int *sum1, HYPRE_Int *in_
  */
 void hypre_prefix_sum_multiple(HYPRE_Int *in_out, HYPRE_Int *sum, HYPRE_Int n, HYPRE_Int *workspace);
 
-/* hypre_merge_sort.c */
-/**
- * Why merge sort?
- * 1) Merge sort can take advantage of eliminating duplicates.
- * 2) Merge sort is more efficiently parallelizable than qsort
- */
-
-/**
- * Out of place merge sort with duplicate elimination
- * @ret number of unique elements
- */
-HYPRE_Int hypre_merge_sort_unique(HYPRE_Int *in, HYPRE_Int *out, HYPRE_Int len);
-/**
- * Out of place merge sort with duplicate elimination
- *
- * @param out pointer to output can be in or temp
- * @ret number of unique elements
- */
-HYPRE_Int hypre_merge_sort_unique2(HYPRE_Int *in, HYPRE_Int *temp, HYPRE_Int len, HYPRE_Int **out);
-
-void hypre_merge_sort(HYPRE_Int *in, HYPRE_Int *temp, HYPRE_Int len, HYPRE_Int **sorted);
-
-void hypre_union2(HYPRE_Int n1, HYPRE_Int *arr1, HYPRE_Int n2, HYPRE_Int *arr2, HYPRE_Int *n3, HYPRE_Int *arr3, HYPRE_Int *map1, HYPRE_Int *map2);
-
 /* hypre_hopscotch_hash.c */
 
 #ifdef HYPRE_USING_OPENMP
 
 /* Check if atomic operations are available to use concurrent hopscotch hash table */
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) > 40100
-#define HYPRE_USING_ATOMIC 
+#define HYPRE_USING_ATOMIC
 //#elif defined _MSC_VER // JSP: haven't tested, so comment out for now
 //#define HYPRE_USING_ATOMIC
 //#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && !defined(__STDC_NO_ATOMICS__)
@@ -161,12 +139,13 @@ void hypre_union2(HYPRE_Int n1, HYPRE_Int *arr1, HYPRE_Int n2, HYPRE_Int *arr2, 
 #ifdef HYPRE_HOPSCOTCH
 #ifdef HYPRE_USING_ATOMIC
 // concurrent hopscotch hashing is possible only with atomic supports
-#define HYPRE_CONCURRENT_HOPSCOTCH 
-#endif 
-#endif 
+#define HYPRE_CONCURRENT_HOPSCOTCH
+#endif
+#endif
 
 #ifdef HYPRE_CONCURRENT_HOPSCOTCH
-typedef struct {
+typedef struct
+{
   HYPRE_Int volatile timestamp;
   omp_lock_t         lock;
 } hypre_HopscotchSegment;
@@ -184,15 +163,27 @@ typedef struct {
  */
 typedef struct
 {
-	HYPRE_Int  volatile              segmentMask;
-	HYPRE_Int  volatile              bucketMask;
+   HYPRE_Int  volatile              segmentMask;
+   HYPRE_Int  volatile              bucketMask;
 #ifdef HYPRE_CONCURRENT_HOPSCOTCH
-	hypre_HopscotchSegment* volatile segments;
+   hypre_HopscotchSegment* volatile segments;
 #endif
-  HYPRE_Int *volatile              key;
-  hypre_uint *volatile             hopInfo;
-	HYPRE_Int *volatile	             hash;
+   HYPRE_Int *volatile              key;
+   hypre_uint *volatile             hopInfo;
+   HYPRE_Int *volatile              hash;
 } hypre_UnorderedIntSet;
+
+typedef struct
+{
+   HYPRE_Int volatile            segmentMask;
+   HYPRE_Int volatile            bucketMask;
+#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+   hypre_HopscotchSegment* volatile segments;
+#endif
+   HYPRE_BigInt *volatile           key;
+   hypre_uint *volatile             hopInfo;
+   HYPRE_BigInt *volatile           hash;
+} hypre_UnorderedBigIntSet;
 
 typedef struct
 {
@@ -202,6 +193,14 @@ typedef struct
   HYPRE_Int  volatile data;
 } hypre_HopscotchBucket;
 
+typedef struct
+{
+  hypre_uint volatile hopInfo;
+  HYPRE_BigInt  volatile hash;
+  HYPRE_BigInt  volatile key;
+  HYPRE_Int  volatile data;
+} hypre_BigHopscotchBucket;
+
 /**
  * The current typical use case of unoredered map is putting input sequence
  * with no duplication (inverse map of a bijective mapping) followed by
@@ -210,18 +209,47 @@ typedef struct
  */
 typedef struct
 {
-	HYPRE_Int  volatile              segmentMask;
-	HYPRE_Int  volatile              bucketMask;
+   HYPRE_Int  volatile              segmentMask;
+   HYPRE_Int  volatile              bucketMask;
 #ifdef HYPRE_CONCURRENT_HOPSCOTCH
-	hypre_HopscotchSegment*	volatile segments;
+   hypre_HopscotchSegment* volatile segments;
 #endif
-	hypre_HopscotchBucket* volatile	 table;
+   hypre_HopscotchBucket* volatile table;
 } hypre_UnorderedIntMap;
 
+typedef struct
+{
+   HYPRE_Int  volatile segmentMask;
+   HYPRE_Int  volatile bucketMask;
+#ifdef HYPRE_CONCURRENT_HOPSCOTCH
+   hypre_HopscotchSegment* volatile segments;
+#endif
+   hypre_BigHopscotchBucket* volatile table;
+} hypre_UnorderedBigIntMap;
+
+/* hypre_merge_sort.c */
 /**
- * Sort array "in" with length len and put result in array "out"
- * "in" will be deallocated unless in == *out
- * inverse_map is an inverse hash table s.t. inverse_map[i] = j iff (*out)[j] = i
+ * Why merge sort?
+ * 1) Merge sort can take advantage of eliminating duplicates.
+ * 2) Merge sort is more efficiently parallelizable than qsort
  */
-void hypre_sort_and_create_inverse_map(
-  HYPRE_Int *in, HYPRE_Int len, HYPRE_Int **out, hypre_UnorderedIntMap *inverse_map);
+void hypre_union2(HYPRE_Int n1, HYPRE_BigInt *arr1, HYPRE_Int n2, HYPRE_BigInt *arr2, HYPRE_Int *n3, HYPRE_BigInt *arr3, HYPRE_Int *map1, HYPRE_Int *map2);
+void hypre_merge_sort(HYPRE_Int *in, HYPRE_Int *temp, HYPRE_Int len, HYPRE_Int **sorted);
+void hypre_big_merge_sort(HYPRE_BigInt *in, HYPRE_BigInt *temp, HYPRE_Int len, HYPRE_BigInt **sorted);
+void hypre_sort_and_create_inverse_map(HYPRE_Int *in, HYPRE_Int len, HYPRE_Int **out, hypre_UnorderedIntMap *inverse_map);
+void hypre_big_sort_and_create_inverse_map(HYPRE_BigInt *in, HYPRE_Int len, HYPRE_BigInt **out, hypre_UnorderedBigIntMap *inverse_map);
+
+
+#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_DEVICE_OPENMP)
+HYPRE_Int hypre_SyncCudaComputeStream(hypre_Handle *hypre_handle);
+HYPRE_Int hypre_SyncCudaDevice(hypre_Handle *hypre_handle);
+HYPRE_Int hypreDevice_DiagScaleVector(HYPRE_Int n, HYPRE_Int *A_i, HYPRE_Complex *A_data, HYPRE_Complex *x, HYPRE_Complex *y);
+HYPRE_Int hypreDevice_IVAXPY(HYPRE_Int n, HYPRE_Complex *a, HYPRE_Complex *x, HYPRE_Complex *y);
+HYPRE_Int hypreDevice_MaskedIVAXPY(HYPRE_Int n, HYPRE_Complex *a, HYPRE_Complex *x, HYPRE_Complex *y, HYPRE_Int *mask);
+HYPRE_Int hypreDevice_BigIntFilln(HYPRE_BigInt *d_x, size_t n, HYPRE_BigInt v);
+#endif
+
+/* hypre_nvtx.c */
+void hypre_NvtxPushRangeColor(const char *name, HYPRE_Int cid);
+void hypre_NvtxPushRange(const char *name);
+void hypre_NvtxPopRange();

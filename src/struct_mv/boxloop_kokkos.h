@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -23,10 +18,16 @@
 #ifndef HYPRE_NEWBOXLOOP_HEADER
 #define HYPRE_NEWBOXLOOP_HEADER
 
+#ifdef __cplusplus
 extern "C++" {
+#endif
+
 #include <Kokkos_Core.hpp>
 using namespace Kokkos;
+
+#ifdef __cplusplus
 }
+#endif
 
 #if defined( KOKKOS_HAVE_MPI )
 #include <mpi.h>
@@ -347,13 +348,9 @@ struct ColumnSums
 }
 */
 
-#define hypre_newBoxLoopSetOneBlock()
-
 #define hypre_newBoxLoopGetIndex(index)\
   index[0] = hypre_IndexD(local_idx, 0); index[1] = hypre_IndexD(local_idx, 1); index[2] = hypre_IndexD(local_idx, 2);
-  
-#define hypre_BoxLoopGetIndex    zypre_BoxLoopGetIndex
-#define hypre_BoxLoopSetOneBlock hypre_newBoxLoopSetOneBlock
+
 #define hypre_BoxLoopBlock()       0
 #define hypre_BoxLoop0Begin      hypre_newBoxLoop0Begin
 #define hypre_BoxLoop0For        hypre_newBoxLoop0For

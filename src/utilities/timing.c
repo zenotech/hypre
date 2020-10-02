@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -108,7 +103,7 @@ hypre_InitializeTiming( const char *name )
          old_name      = (hypre_global_timing_ref(threadid, name));
          old_state     = (hypre_global_timing_ref(threadid, state));
          old_num_regs  = (hypre_global_timing_ref(threadid, num_regs));
-    
+
          (hypre_global_timing_ref(threadid, wall_time)) =
             hypre_CTAlloc(HYPRE_Real,  (time_index+1), HYPRE_MEMORY_HOST);
          (hypre_global_timing_ref(threadid, cpu_time))  =
@@ -181,7 +176,7 @@ hypre_FinalizeTiming( HYPRE_Int time_index )
    if ((hypre_global_timing -> num_names) == 0)
    {
       for (i = 0; i < (hypre_global_timing -> size); i++)
-      {  
+      {
          hypre_TFree(hypre_global_timing_ref(i,  wall_time), HYPRE_MEMORY_HOST);
          hypre_TFree(hypre_global_timing_ref(i,  cpu_time), HYPRE_MEMORY_HOST);
          hypre_TFree(hypre_global_timing_ref(i,  flops), HYPRE_MEMORY_HOST);
@@ -189,7 +184,7 @@ hypre_FinalizeTiming( HYPRE_Int time_index )
          hypre_TFree(hypre_global_timing_ref(i,  state), HYPRE_MEMORY_HOST);
          hypre_TFree(hypre_global_timing_ref(i,  num_regs), HYPRE_MEMORY_HOST);
       }
-      
+
       hypre_TFree(hypre_global_timing, HYPRE_MEMORY_HOST);
       hypre_global_timing = NULL;
    }
@@ -202,7 +197,7 @@ hypre_FinalizeTiming( HYPRE_Int time_index )
  *--------------------------------------------------------------------------*/
 
 HYPRE_Int
-hypre_IncFLOPCount( HYPRE_Int inc )
+hypre_IncFLOPCount( HYPRE_BigInt inc )
 {
    HYPRE_Int  ierr = 0;
 

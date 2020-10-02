@@ -1,14 +1,7 @@
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 include ../config/Makefile.config
 
@@ -42,6 +35,8 @@ HEADERS =\
  block_tridiag.h\
  Common.h\
  par_amg.h\
+ par_amgdd.h\
+ par_amgdd_comp_grid.h\
  schwarz.h
 
 FILES =\
@@ -66,6 +61,7 @@ FILES =\
  F90_HYPRE_ams.c\
  gen_redcs_mat.c\
  HYPRE_parcsr_amg.c\
+ HYPRE_parcsr_amgdd.c\
  HYPRE_parcsr_bicgstab.c\
  HYPRE_parcsr_block.c\
  HYPRE_parcsr_cgnr.c\
@@ -77,6 +73,7 @@ FILES =\
  HYPRE_parcsr_hybrid.c\
  HYPRE_parcsr_int.c\
  HYPRE_parcsr_mgr.c\
+ HYPRE_parcsr_ilu.c \
  HYPRE_parcsr_ParaSails.c\
  HYPRE_parcsr_pcg.c\
  HYPRE_parcsr_pilut.c\
@@ -84,7 +81,14 @@ FILES =\
  HYPRE_ams.c\
  HYPRE_ads.c\
  HYPRE_ame.c\
+ par_2s_interp.c\
  par_amg.c\
+ par_amgdd.c\
+ par_amgdd_comp_grid.c\
+ par_amgdd_setup.c\
+ par_amgdd_solve.c\
+ par_amgdd_fac_cycle.c\
+ par_amgdd_helpers.c\
  par_amg_setup.c\
  par_amg_solve.c\
  par_amg_solveT.c\
@@ -98,25 +102,29 @@ FILES =\
  par_cycle.c\
  par_add_cycle.c\
  par_difconv.c\
+ par_gauss_elim.c\
  par_gsmg.c\
  par_indepset.c\
  par_interp.c\
  par_jacobi_interp.c\
+ par_krylov_func.c\
+ par_mod_lr_interp.c\
  par_multi_interp.c\
+ par_laplace.c\
  par_laplace_27pt.c\
  par_laplace_9pt.c\
- par_laplace.c\
  par_lr_interp.c\
  par_mgr.c\
  par_mgr_setup.c\
  par_mgr_solve.c\
+ par_ilu.c\
+ par_ilu_setup.c \
+ par_ilu_solve.c \
  par_nongalerkin.c\
  par_nodal_systems.c\
  par_rap.c\
  par_rap_communication.c\
  par_rotate_7pt.c\
- par_vardifconv.c\
- par_vardifconv_rs.c\
  par_relax.c\
  par_relax_more.c\
  par_relax_interface.c\
@@ -126,18 +134,32 @@ FILES =\
  par_strength.c\
  par_sv_interp.c\
  par_sv_interp_ln.c\
+ par_vardifconv.c\
+ par_vardifconv_rs.c\
  partial.c\
- pcg_par.c\
  schwarz.c\
  block_tridiag.c\
- ams.c\
  ads.c\
  ame.c\
  par_restr.c\
  par_lr_restr.c\
- superlu.c
+ dsuperlu.c
 
-OBJS = ${FILES:.c=.o}
+CUFILES =\
+ ams.c\
+ par_coarsen_device.c\
+ par_indepset_device.c\
+ par_interp_device.c\
+ par_interp_trunc_device.c\
+ par_lr_interp_device.c\
+ par_strength_device.c\
+ par_strength2nd_device.c\
+ par_amgdd_fac_cycle_device.c\
+ par_2s_interp_device.c
+
+COBJS = ${FILES:.c=.o}
+CUOBJS = ${CUFILES:.c=.obj}
+OBJS = ${COBJS} ${CUOBJS}
 
 SONAME = libHYPRE_parcsr_ls-${HYPRE_RELEASE_VERSION}${HYPRE_LIB_SUFFIX}
 
@@ -156,7 +178,7 @@ install: libHYPRE_parcsr_ls${HYPRE_LIB_SUFFIX}
 #	cp -fR libHYPRE* $(HYPRE_LIB_INSTALL)
 
 clean:
-	rm -f *.o libHYPRE*
+	rm -f *.o* libHYPRE*
 	rm -rf pchdir tca.map *inslog*
 
 distclean: clean

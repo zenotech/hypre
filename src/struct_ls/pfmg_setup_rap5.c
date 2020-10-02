@@ -1,16 +1,12 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #include "_hypre_struct_ls.h"
+#include "_hypre_struct_mv.hpp"
 #include "pfmg.h"
 
 /*--------------------------------------------------------------------------
@@ -27,11 +23,11 @@
    cdir = (cdir + 1) % 2;
 
 /*--------------------------------------------------------------------------
- * hypre_PFMGCreateCoarseOp5 
+ * hypre_PFMGCreateCoarseOp5
  *    Sets up new coarse grid operator stucture. Fine grid
  *    operator is 5pt and so is coarse, i.e. non-Galerkin.
  *--------------------------------------------------------------------------*/
- 
+
 hypre_StructMatrix *
 hypre_PFMGCreateCoarseOp5( hypre_StructMatrix *R,
                            hypre_StructMatrix *A,
@@ -50,7 +46,7 @@ hypre_PFMGCreateCoarseOp5( hypre_StructMatrix *R,
    hypre_Index            index_temp;
    HYPRE_Int              j, i;
    HYPRE_Int              stencil_rank;
- 
+
    RAP_stencil_dim = 2;
 
    /*-----------------------------------------------------------------------
@@ -67,7 +63,7 @@ hypre_PFMGCreateCoarseOp5( hypre_StructMatrix *R,
    {
 
       /*--------------------------------------------------------------------
-       * 5 point coarse grid stencil 
+       * 5 point coarse grid stencil
        *--------------------------------------------------------------------*/
       RAP_stencil_size = 5;
       RAP_stencil_shape = hypre_CTAlloc(hypre_Index,  RAP_stencil_size, HYPRE_MEMORY_HOST);
@@ -196,10 +192,10 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
    HYPRE_Real           *rap_cb, *rap_ca;
 
    HYPRE_Real            center_int, center_bdy;
-                      
-   HYPRE_Int             OffsetA; 
-   HYPRE_Int             OffsetP; 
-                      
+
+   HYPRE_Int             OffsetA;
+   HYPRE_Int             OffsetP;
+
    stridef = cstride;
    hypre_SetIndex3(stridec, 1, 1, 1);
 
@@ -248,8 +244,8 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
 
       /*-----------------------------------------------------------------
        * Extract pointers for interpolation operator:
-       * pb is pointer for weight for f-point below c-point 
-       * pa is pointer for weight for f-point above c-point 
+       * pb is pointer for weight for f-point below c-point
+       * pa is pointer for weight for f-point above c-point
        *-----------------------------------------------------------------*/
 
       hypre_SetIndex3(index_temp,0,-1,0);
@@ -261,10 +257,10 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
       pb = hypre_StructMatrixExtractPointerByIndex(P, fi, index);
       //RL PTROFFSET
       HYPRE_Int pbOffset = hypre_BoxOffsetDistance(P_dbox, index);
- 
+
       /*-----------------------------------------------------------------
        * Extract pointers for 5-point fine grid operator:
-       * 
+       *
        * a_cc is pointer for center coefficient
        * a_cw is pointer for west coefficient
        * a_ce is pointer for east coefficient
@@ -322,7 +318,7 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
        *
        * In the BoxLoop below I assume iA and iP refer to data associated
        * with the point which we are building the stencil for. The below
-       * Offsets are used in refering to data associated with other points. 
+       * Offsets are used in refering to data associated with other points.
        *-----------------------------------------------------------------*/
 
       hypre_SetIndex3(index_temp,0,1,0);
@@ -333,7 +329,7 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
 
       /*--------------------------------------------------------------
        * Loop for symmetric 5-point fine grid operator; produces a
-       * symmetric 5-point coarse grid operator. 
+       * symmetric 5-point coarse grid operator.
        *--------------------------------------------------------------*/
 
       if ( constant_coefficient==0 )
@@ -348,7 +344,7 @@ hypre_PFMGBuildCoarseOp5( hypre_StructMatrix *A,
          {
             HYPRE_Int iAm1,iAp1,iPm1,iPp1;
             HYPRE_Real  west, east;
-             
+
             iAm1 = iA - OffsetA;
             iAp1 = iA + OffsetA;
 

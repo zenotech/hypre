@@ -18,17 +18,12 @@
 extern "C" {
 #endif
 
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -74,19 +69,19 @@ typedef struct
    HYPRE_SStructVariable  *vartypes;         /* types of variables */
    hypre_StructGrid       *sgrids[8];        /* struct grids for each vartype */
    hypre_BoxArray         *iboxarrays[8];    /* interface boxes */
-                                       
+
    hypre_BoxArray         *pneighbors;
    hypre_Index            *pnbor_offsets;
 
    HYPRE_Int               local_size;       /* Number of variables locally */
-   HYPRE_Int               global_size;      /* Total number of variables */
+   HYPRE_BigInt            global_size;      /* Total number of variables */
 
    hypre_Index             periodic;         /* Indicates if pgrid is periodic */
 
   /* GEC0902 additions for ghost expansion of boxes */
 
    HYPRE_Int               ghlocal_size;     /* Number of vars including ghosts */
-                           
+
    HYPRE_Int               cell_sgrid_done;  /* =1 implies cell grid already assembled */
 } hypre_SStructPGrid;
 
@@ -109,25 +104,25 @@ enum hypre_SStructBoxManInfoType
 typedef struct
 {
    HYPRE_Int  type;
-   HYPRE_Int  offset;
-   HYPRE_Int  ghoffset; 
+   HYPRE_BigInt offset;
+   HYPRE_BigInt ghoffset;
 
 } hypre_SStructBoxManInfo;
 
 typedef struct
 {
    HYPRE_Int    type;
-   HYPRE_Int    offset;   /* minimum offset for this box */
-   HYPRE_Int    ghoffset; /* minimum offset ghost for this box */
+   HYPRE_BigInt offset;   /* minimum offset for this box */
+   HYPRE_BigInt ghoffset; /* minimum offset ghost for this box */
    HYPRE_Int    proc;     /* redundant with the proc in the entry, but
                              makes some coding easier */
-   HYPRE_Int    boxnum;   /* this is different from the entry id */ 
+   HYPRE_Int    boxnum;   /* this is different from the entry id */
    HYPRE_Int    part;     /* part the box lives on */
    hypre_Index  ilower;   /* box ilower, but on the neighbor index-space */
    hypre_Index  coord;    /* lives on local index-space */
    hypre_Index  dir;      /* lives on local index-space */
    hypre_Index  stride;   /* lives on local index-space */
-   hypre_Index  ghstride; /* the ghost equivalent of strides */ 
+   hypre_Index  ghstride; /* the ghost equivalent of strides */
 
 } hypre_SStructBoxManNborInfo;
 
@@ -138,7 +133,7 @@ typedef struct
    HYPRE_Int        recv_part;
    HYPRE_Int        send_var;
    HYPRE_Int        recv_var;
-   
+
 } hypre_SStructCommInfo;
 
 typedef struct hypre_SStructGrid_struct
@@ -146,11 +141,11 @@ typedef struct hypre_SStructGrid_struct
    MPI_Comm                   comm;
    HYPRE_Int                  ndim;
    HYPRE_Int                  nparts;
-                          
-   /* s-variable info */  
+
+   /* s-variable info */
    hypre_SStructPGrid       **pgrids;
-                          
-   /* neighbor info */    
+
+   /* neighbor info */
    HYPRE_Int                 *nneighbors;
    hypre_SStructNeighbor    **neighbors;
    hypre_Index              **nbor_offsets;
@@ -173,18 +168,18 @@ typedef struct hypre_SStructGrid_struct
    hypre_BoxManager        ***boxmans;      /* manager for each part, var */
    hypre_BoxManager        ***nbor_boxmans; /* manager for each part, var */
 
-   HYPRE_Int                  start_rank;
+   HYPRE_BigInt               start_rank;
 
    HYPRE_Int                  local_size;  /* Number of variables locally */
-   HYPRE_Int                  global_size; /* Total number of variables */
-                              
+   HYPRE_BigInt               global_size; /* Total number of variables */
+
    HYPRE_Int                  ref_count;
 
  /* GEC0902 additions for ghost expansion of boxes */
 
    HYPRE_Int               ghlocal_size;  /* GEC0902 Number of vars including ghosts */
-   HYPRE_Int               ghstart_rank;  /* GEC0902 start rank including ghosts  */
-   HYPRE_Int               num_ghost[2*HYPRE_MAXDIM]; /* ghost layer size */  
+   HYPRE_BigInt            ghstart_rank;  /* GEC0902 start rank including ghosts  */
+   HYPRE_Int               num_ghost[2*HYPRE_MAXDIM]; /* ghost layer size */
 
 } hypre_SStructGrid;
 
@@ -318,17 +313,12 @@ typedef struct hypre_SStructGrid_struct
 
 #endif
 
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -371,17 +361,12 @@ hypre_StructStencilNDim( hypre_SStructStencilSStencil(stencil) )
 hypre_StructStencilElement( hypre_SStructStencilSStencil(stencil), i )
 
 #endif
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -401,7 +386,7 @@ typedef struct
    HYPRE_Int     part;
    hypre_Index   index;
    HYPRE_Int     var;
-   HYPRE_Int     to_part;     
+   HYPRE_Int     to_part;
    hypre_Index   to_index;
    HYPRE_Int     to_var;
 
@@ -452,7 +437,7 @@ typedef struct hypre_SStructGraph_struct
    hypre_SStructUVEntry  **Uventries;
    HYPRE_Int               Uvesize;    /* size of Uventries array */
    HYPRE_Int               Uemaxsize;  /* max size of Uentries */
-   HYPRE_Int             **Uveoffsets; /* offsets for computing rank indexes */
+   HYPRE_BigInt          **Uveoffsets; /* offsets for computing rank indexes */
 
    HYPRE_Int               ref_count;
 
@@ -547,17 +532,12 @@ typedef struct hypre_SStructGraph_struct
 #define hypre_SStructGraphEntryToVar(g)    ((g) -> to_var)
 
 #endif
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -611,12 +591,14 @@ typedef struct hypre_SStructMatrix_struct
    /* U-matrix info */
    HYPRE_IJMatrix          ijmatrix;
    hypre_ParCSRMatrix     *parcsrmatrix;
-                         
+
    /* temporary storage for SetValues routines */
    HYPRE_Int               entries_size;
    HYPRE_Int              *Sentries;
    HYPRE_Int              *Uentries;
-   HYPRE_Int              *tmp_col_coords;
+
+   HYPRE_BigInt           *tmp_row_coords;
+   HYPRE_BigInt           *tmp_col_coords;
    HYPRE_Complex          *tmp_coeffs;
 
    HYPRE_Int               ns_symmetric; /* Non-stencil entries symmetric? */
@@ -647,6 +629,7 @@ typedef struct hypre_SStructMatrix_struct
 #define hypre_SStructMatrixEntriesSize(mat)    ((mat) -> entries_size)
 #define hypre_SStructMatrixSEntries(mat)       ((mat) -> Sentries)
 #define hypre_SStructMatrixUEntries(mat)       ((mat) -> Uentries)
+#define hypre_SStructMatrixTmpRowCoords(mat)   ((mat) -> tmp_row_coords)
 #define hypre_SStructMatrixTmpColCoords(mat)   ((mat) -> tmp_col_coords)
 #define hypre_SStructMatrixTmpCoeffs(mat)      ((mat) -> tmp_coeffs)
 #define hypre_SStructMatrixNSSymmetric(mat)    ((mat) -> ns_symmetric)
@@ -680,17 +663,12 @@ hypre_SStructPGridNDim(hypre_SStructPMatrixPGrid(pmat))
 #define hypre_SStructPMatrixRefCount(pmat)          ((pmat) -> ref_count)
 
 #endif
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -718,7 +696,7 @@ typedef struct
 
    HYPRE_Int               ref_count;
 
-   HYPRE_Int              *dataindices;  /* GEC1002 array for starting index of the 
+   HYPRE_Int              *dataindices;  /* GEC1002 array for starting index of the
                                             svector. pdataindices[varx] */
    HYPRE_Int               datasize;     /* Size of the pvector = sums size of svectors */
 
@@ -794,17 +772,12 @@ typedef struct hypre_SStructVector_struct
 #define hypre_SStructPVectorDataSize(pvec)    ((pvec) -> datasize  )
 
 #endif
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /* HYPRE_sstruct_graph.c */
 HYPRE_Int HYPRE_SStructGraphCreate ( MPI_Comm comm , HYPRE_SStructGrid grid , HYPRE_SStructGraph *graph_ptr );
@@ -890,7 +863,7 @@ HYPRE_Int hypre_SStructCopy ( hypre_SStructVector *x , hypre_SStructVector *y );
 
 /* sstruct_graph.c */
 HYPRE_Int hypre_SStructGraphRef ( hypre_SStructGraph *graph , hypre_SStructGraph **graph_ref );
-HYPRE_Int hypre_SStructGraphGetUVEntryRank( hypre_SStructGraph *graph , HYPRE_Int part , HYPRE_Int var , hypre_Index index, HYPRE_Int *rank );
+HYPRE_Int hypre_SStructGraphGetUVEntryRank( hypre_SStructGraph *graph , HYPRE_Int part , HYPRE_Int var , hypre_Index index, HYPRE_BigInt *rank );
 HYPRE_Int hypre_SStructGraphFindBoxEndpt ( hypre_SStructGraph *graph , HYPRE_Int part , HYPRE_Int var , HYPRE_Int proc , HYPRE_Int endpt , HYPRE_Int boxi );
 HYPRE_Int hypre_SStructGraphFindSGridEndpts ( hypre_SStructGraph *graph , HYPRE_Int part , HYPRE_Int var , HYPRE_Int proc , HYPRE_Int endpt , HYPRE_Int *endpts );
 
@@ -912,8 +885,8 @@ HYPRE_Int hypre_SStructGridFindNborBoxManEntry ( hypre_SStructGrid *grid , HYPRE
 HYPRE_Int hypre_SStructGridBoxProcFindBoxManEntry ( hypre_SStructGrid *grid , HYPRE_Int part , HYPRE_Int var , HYPRE_Int box , HYPRE_Int proc , hypre_BoxManEntry **entry_ptr );
 HYPRE_Int hypre_SStructBoxManEntryGetCSRstrides ( hypre_BoxManEntry *entry , hypre_Index strides );
 HYPRE_Int hypre_SStructBoxManEntryGetGhstrides ( hypre_BoxManEntry *entry , hypre_Index strides );
-HYPRE_Int hypre_SStructBoxManEntryGetGlobalCSRank ( hypre_BoxManEntry *entry , hypre_Index index , HYPRE_Int *rank_ptr );
-HYPRE_Int hypre_SStructBoxManEntryGetGlobalGhrank ( hypre_BoxManEntry *entry , hypre_Index index , HYPRE_Int *rank_ptr );
+HYPRE_Int hypre_SStructBoxManEntryGetGlobalCSRank ( hypre_BoxManEntry *entry , hypre_Index index , HYPRE_BigInt *rank_ptr );
+HYPRE_Int hypre_SStructBoxManEntryGetGlobalGhrank ( hypre_BoxManEntry *entry , hypre_Index index , HYPRE_BigInt *rank_ptr );
 HYPRE_Int hypre_SStructBoxManEntryGetProcess ( hypre_BoxManEntry *entry , HYPRE_Int *proc_ptr );
 HYPRE_Int hypre_SStructBoxManEntryGetBoxnum ( hypre_BoxManEntry *entry , HYPRE_Int *id_ptr );
 HYPRE_Int hypre_SStructBoxManEntryGetPart ( hypre_BoxManEntry *entry , HYPRE_Int part , HYPRE_Int *part_ptr );
@@ -923,7 +896,7 @@ HYPRE_Int hypre_SStructNborIndexToIndex( hypre_Index nbor_index , hypre_Index ro
 HYPRE_Int hypre_SStructNborBoxToBox ( hypre_Box *nbor_box , hypre_Index root , hypre_Index nbor_root , hypre_Index coord , hypre_Index dir );
 HYPRE_Int hypre_SStructVarToNborVar ( hypre_SStructGrid *grid , HYPRE_Int part , HYPRE_Int var , HYPRE_Int *coord , HYPRE_Int *nbor_var_ptr );
 HYPRE_Int hypre_SStructGridSetNumGhost ( hypre_SStructGrid *grid , HYPRE_Int *num_ghost );
-HYPRE_Int hypre_SStructBoxManEntryGetGlobalRank ( hypre_BoxManEntry *entry , hypre_Index index , HYPRE_Int *rank_ptr , HYPRE_Int type );
+HYPRE_Int hypre_SStructBoxManEntryGetGlobalRank ( hypre_BoxManEntry *entry , hypre_Index index , HYPRE_BigInt *rank_ptr , HYPRE_Int type );
 HYPRE_Int hypre_SStructBoxManEntryGetStrides ( hypre_BoxManEntry *entry , hypre_Index strides , HYPRE_Int type );
 HYPRE_Int hypre_SStructBoxNumMap ( hypre_SStructGrid *grid , HYPRE_Int part , HYPRE_Int boxnum , HYPRE_Int **num_varboxes_ptr , HYPRE_Int ***map_ptr );
 HYPRE_Int hypre_SStructCellGridBoxNumMap ( hypre_SStructGrid *grid , HYPRE_Int part , HYPRE_Int ***num_varboxes_ptr , HYPRE_Int ****map_ptr );

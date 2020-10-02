@@ -1,15 +1,8 @@
 #!/bin/sh
-#BHEADER**********************************************************************
-# Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-# This file is part of HYPRE.  See file COPYRIGHT for details.
+# Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+# HYPRE Project Developers. See the top-level COPYRIGHT file for details.
 #
-# HYPRE is free software; you can redistribute it and/or modify it under the
-# terms of the GNU Lesser General Public License (as published by the Free
-# Software Foundation) version 2.1 dated February 1999.
-#
-# $Revision$
-#EHEADER**********************************************************************
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 testname=`basename $0 .sh`
 
@@ -45,6 +38,11 @@ shift
 
 # Organizing the tests from "fast" to "slow"
 
+# Check license header info
+#( cd $src_dir; make distclean )
+./test.sh check-license.sh $src_dir/..
+mv -f check-license.??? $output_dir
+
 # Check for 'int', 'double', and 'MPI_'
 ./test.sh check-int.sh $src_dir
 mv -f check-int.??? $output_dir
@@ -52,6 +50,8 @@ mv -f check-int.??? $output_dir
 mv -f check-double.??? $output_dir
 ./test.sh check-mpi.sh $src_dir
 mv -f check-mpi.??? $output_dir
+./test.sh check-headers.sh $src_dir
+mv -f check-headers.??? $output_dir
 
 # Basic build and run tests
 mo="-j test"
@@ -120,6 +120,11 @@ RO="-ams -ij -sstruct -struct -lobpcg -rt -D HYPRE_NO_SAVED -nthreads 2"
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo -ro: $RO
 ./renametest.sh basic $output_dir/basic--with-openmp
 
+co="--with-openmp --enable-hopscotch"
+RO="-ij -sstruct -struct -lobpcg -rt -D HYPRE_NO_SAVED -nthreads 2"
+./test.sh basic.sh $src_dir -co: $co -mo: $mo -ro: $RO
+./renametest.sh basic $output_dir/basic--with-concurrent-hopscotch
+
 co="--enable-single --enable-debug"
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo -ro: -single
 ./renametest.sh basic $output_dir/basic--enable-single
@@ -135,6 +140,10 @@ co="--enable-debug CC=mpiCC"
 co="--enable-bigint --enable-debug"
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo -ro: $ro -eo: -bigint
 ./renametest.sh basic $output_dir/basic--enable-bigint
+
+co="--enable-mixedint --enable-debug"
+./test.sh basic.sh $src_dir -co: $co -mo: $mo
+./renametest.sh basic $output_dir/basic--enable-mixedint
 
 co="--enable-debug --with-print-errors"
 ./test.sh basic.sh $src_dir -co: $co -mo: $mo -ro: $ro -rt -valgrind

@@ -1,17 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
-
-
-
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #include <stdio.h>
 /* Convert - conversion routines from triangular formats */
@@ -33,14 +25,14 @@ HYPRE_Int convert(FILE *infile, FILE *outfile)
     HYPRE_Int i, j;
 
     /* skip the comment section */
-    do 
+    do
     {
-        if (fgets(line, MM_MAX_LINE_LENGTH, infile) == NULL) 
+        if (fgets(line, MM_MAX_LINE_LENGTH, infile) == NULL)
             return -1;
     }
     while (line[0] == '%');
 
-    hypre_sscanf(line, "%d %d %d", &M, &N, &nz); 
+    hypre_sscanf(line, "%d %d %d", &M, &N, &nz);
 
     hypre_printf("%d %d %d\n", M, N, nz);
     nnz = 2*nz - M;
@@ -66,7 +58,7 @@ HYPRE_Int convert(FILE *infile, FILE *outfile)
     /* allocate space for whole matrix */
     ind = hypre_TAlloc(HYPRE_Int, nnz , HYPRE_MEMORY_HOST);
     val = hypre_TAlloc(HYPRE_Real, nnz , HYPRE_MEMORY_HOST);
-    
+
     /* set pointer to beginning of each row */
     pointers[1] = 0;
     for (i=2; i<=M; i++)

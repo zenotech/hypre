@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,6 +13,7 @@
 #include "HYPRE_struct_mv.h"
 /* RDF: This include is only needed for AddValuesVector() */
 #include "_hypre_struct_mv.h"
+#include "_hypre_struct_mv.hpp"
 
 HYPRE_Int AddValuesVector( hypre_StructGrid   *grid,
                            hypre_StructVector *vector,
@@ -26,7 +22,7 @@ HYPRE_Int AddValuesVector( hypre_StructGrid   *grid,
 /*--------------------------------------------------------------------------
  * Test driver for structured matrix interface (structured storage)
  *--------------------------------------------------------------------------*/
- 
+
 /*----------------------------------------------------------------------
  * Standard 7-point laplacian in 3D with grid and anisotropy determined
  * as command line arguments.  Do `driver -help' for usage info.
@@ -69,12 +65,12 @@ main( hypre_int argc,
    hypre_MPI_Comm_rank(hypre_MPI_COMM_WORLD, &myid );
 
    /* Initialize Hypre */
-   HYPRE_Init(argc, argv);
+   HYPRE_Init();
 
    /*-----------------------------------------------------------
     * Set defaults
     *-----------------------------------------------------------*/
- 
+
    dim = 3;
 
    nx = 2;
@@ -96,7 +92,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Parse command line
     *-----------------------------------------------------------*/
- 
+
    print_usage = 0;
    arg_index = 1;
    while (arg_index < argc)
@@ -153,7 +149,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Print usage info
     *-----------------------------------------------------------*/
- 
+
    if ( (print_usage) && (myid == 0) )
    {
       hypre_printf("\n");
@@ -196,7 +192,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Print driver parameters
     *-----------------------------------------------------------*/
- 
+
    if (myid == 0)
    {
       hypre_printf("Running with these driver parameters:\n");
@@ -383,7 +379,7 @@ main( hypre_int argc,
 
    HYPRE_StructGridDestroy(from_grid);
    HYPRE_StructGridDestroy(to_grid);
-   
+
    for (i = 0; i < nblocks; i++)
    {
       hypre_TFree(ilower[i], HYPRE_MEMORY_HOST);
@@ -441,7 +437,7 @@ AddValuesVector( hypre_StructGrid   *grid,
       }
       hypre_LoopEnd();
 #undef DEVICE_VAR
-	
+
       ilower = hypre_BoxIMin(box);
       iupper = hypre_BoxIMax(box);
       HYPRE_StructVectorSetBoxValues(vector, ilower, iupper, values);

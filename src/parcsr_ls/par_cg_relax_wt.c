@@ -1,18 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
-
-
-
-
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -28,9 +19,9 @@
  *--------------------------------------------------------------------------*/
 
 HYPRE_Int
-hypre_BoomerAMGCGRelaxWt( void              *amg_vdata, 
-		   	  HYPRE_Int 		     level,
-		   	  HYPRE_Int 		     num_cg_sweeps,
+hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
+		   	  HYPRE_Int	     level,
+		   	  HYPRE_Int 	     num_cg_sweeps,
 			  HYPRE_Real 	    *rlx_wt_ptr)
 {
    hypre_ParAMGData *amg_data = (hypre_ParAMGData*) amg_vdata;
@@ -60,8 +51,8 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
    HYPRE_Int     **v_at_point_array; */
 
 
-   HYPRE_Int      *grid_relax_type;   
- 
+   HYPRE_Int      *grid_relax_type;
+
    /* Local variables  */
 
    HYPRE_Int       Solve_err_flag;
@@ -75,7 +66,7 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
    HYPRE_Int       smooth_num_levels;
    HYPRE_Int       smooth_option = 0;
 
-   HYPRE_Real   *l1_norms = NULL;
+   hypre_Vector *l1_norms = NULL;
 
    HYPRE_Real    alpha;
    HYPRE_Real    beta;
@@ -95,7 +86,7 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
    HYPRE_Real   *D_mat;
    HYPRE_Real   *S_vec;
 #endif
-   
+
    HYPRE_Int num_threads;
 
    num_threads = hypre_NumThreads();
@@ -136,13 +127,13 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
 
    if (num_threads > 1)
    {
-      
+
       Qtemp = hypre_ParVectorCreate(hypre_ParCSRMatrixComm(A),
                                     hypre_ParCSRMatrixGlobalNumRows(A),
                                     hypre_ParCSRMatrixRowStarts(A));
       hypre_ParVectorInitialize(Qtemp);
       hypre_ParVectorSetPartitioningOwner(Qtemp,0);
-      
+
    }
 
    grid_relax_type     = hypre_ParAMGDataGridRelaxType(amg_data);
@@ -176,11 +167,11 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
 
    relax_type = grid_relax_type[1];
    num_sweeps = 1;
-   
+
    local_size = hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
-   old_size 
+   old_size
         = hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp));
-   hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) = 
+   hypre_VectorSize(hypre_ParVectorLocalVector(Vtemp)) =
 	hypre_CSRMatrixNumRows(hypre_ParCSRMatrixDiag(A));
    Ptemp_data = hypre_VectorData(hypre_ParVectorLocalVector(Ptemp));
    Ztemp_data = hypre_VectorData(hypre_ParVectorLocalVector(Ztemp));
@@ -197,11 +188,11 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
       beta = 0.0;
 
       hypre_ParCSRMatrixMatvecT(alpha,R_array[level-1],Vtemp,
-                          beta,F_array[level]);   
+                          beta,F_array[level]);
       hypre_ParVectorCopy(F_array[level],Rtemp);
    } */
 
-   hypre_ParVectorSetRandomValues(Rtemp,5128);    
+   hypre_ParVectorSetRandomValues(Rtemp,5128);
 
       /*------------------------------------------------------------------
        * Do the relaxation num_sweeps times
@@ -214,7 +205,7 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
       {
          if (smooth_option > 6)
          {
-    
+
             hypre_ParVectorCopy(Rtemp,Vtemp);
             alpha = -1.0;
             beta = 1.0;
@@ -256,12 +247,12 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
                                                   0,
                                                   1.0,
                                                   1.0,
-                                                  l1_norms,
+                                                  l1_norms ? hypre_VectorData(l1_norms) : NULL,
                                                   Ztemp,
-                                                  Vtemp, 
+                                                  Vtemp,
                                                   Qtemp);
 	 }
- 
+
          if (Solve_err_flag != 0)
          {
             hypre_ParVectorDestroy(Ptemp);
@@ -301,17 +292,17 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
 	 /* lambda_min_old = lambda_min; */
 	 lambda_max_old = lambda_max;
          rlx_wt_old = rlx_wt;
-         hypre_Bisection(jj+1, tridiag, trioffd, lambda_max_old, 
+         hypre_Bisection(jj+1, tridiag, trioffd, lambda_max_old,
 		max_row_sum, 1.e-3, jj+1, &lambda_max);
          rlx_wt = 1.0/lambda_max;
-         /* hypre_Bisection(jj+1, tridiag, trioffd, 0.0, lambda_min_old, 
+         /* hypre_Bisection(jj+1, tridiag, trioffd, 0.0, lambda_min_old,
 		1.e-3, 1, &lambda_min);
          rlx_wt = 2.0/(lambda_min+lambda_max); */
 	 if (fabs(rlx_wt-rlx_wt_old) < 1.e-3 )
 	 {
 	    /* if (my_id == 0) hypre_printf (" cg sweeps : %d\n", (jj+1)); */
 	    break;
-	 } 
+	 }
       }
       else
       {
@@ -336,7 +327,7 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
 
    hypre_Bisection(num_cg_sweeps, tridiag, trioffd, 0.0, rlx_wt, 1.e-3, 1,
 	&lambda_min);
-   hypre_Bisection(num_cg_sweeps, tridiag, trioffd, 0.0, rlx_wt, 1.e-3, 
+   hypre_Bisection(num_cg_sweeps, tridiag, trioffd, 0.0, rlx_wt, 1.e-3,
 	num_cg_sweeps, &lambda_max);
    */
 
@@ -368,7 +359,7 @@ hypre_BoomerAMGCGRelaxWt( void              *amg_vdata,
  *--------------------------------------------------------------------------*/
 
 HYPRE_Int
-hypre_Bisection(HYPRE_Int n, HYPRE_Real *diag, HYPRE_Real *offd, 
+hypre_Bisection(HYPRE_Int n, HYPRE_Real *diag, HYPRE_Real *offd,
 		HYPRE_Real y, HYPRE_Real z,
 		HYPRE_Real tol, HYPRE_Int k, HYPRE_Real *ev_ptr)
 {
@@ -394,7 +385,7 @@ hypre_Bisection(HYPRE_Int n, HYPRE_Real *diag, HYPRE_Real *offd,
 	 p1 = p2;
          if (p0*p1 <= 0) sign_change++;
       }
-       
+
       if (sign_change >= k)
          z = x;
       else
@@ -405,4 +396,4 @@ hypre_Bisection(HYPRE_Int n, HYPRE_Real *diag, HYPRE_Real *offd,
    *ev_ptr = eigen_value;
 
    return ierr;
-} 
+}

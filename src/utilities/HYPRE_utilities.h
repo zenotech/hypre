@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -38,11 +33,21 @@ extern "C" {
  *--------------------------------------------------------------------------*/
 
 #if defined(HYPRE_BIGINT)
+typedef long long int HYPRE_BigInt;
 typedef long long int HYPRE_Int;
+#define HYPRE_MPI_BIG_INT MPI_LONG_LONG_INT
 #define HYPRE_MPI_INT MPI_LONG_LONG_INT
 
-#else /* default */
+#elif defined(HYPRE_MIXEDINT)
+typedef long long int HYPRE_BigInt;
 typedef int HYPRE_Int;
+#define HYPRE_MPI_BIG_INT MPI_LONG_LONG_INT
+#define HYPRE_MPI_INT MPI_INT
+
+#else /* default */
+typedef int HYPRE_BigInt;
+typedef int HYPRE_Int;
+#define HYPRE_MPI_BIG_INT MPI_INT
 #define HYPRE_MPI_INT MPI_INT
 #endif
 
@@ -105,6 +110,13 @@ typedef HYPRE_Int MPI_Comm;
 #define HYPRE_ERROR_CONV          256   /* method did not converge as expected */
 
 /*--------------------------------------------------------------------------
+ * HYPRE init/finalize
+ *--------------------------------------------------------------------------*/
+
+HYPRE_Int HYPRE_Init();
+HYPRE_Int HYPRE_Finalize();
+
+/*--------------------------------------------------------------------------
  * HYPRE error user functions
  *--------------------------------------------------------------------------*/
 
@@ -158,6 +170,19 @@ HYPRE_VersionNumber( HYPRE_Int  *major_ptr,
 /*Checks whether the AP is on */
 HYPRE_Int HYPRE_AssumedPartitionCheck();
 
+typedef enum _HYPRE_MemoryLocation
+{
+   HYPRE_MEMORY_UNDEFINED = -1,
+   HYPRE_MEMORY_HOST          ,
+   HYPRE_MEMORY_DEVICE
+} HYPRE_MemoryLocation;
+
+typedef enum _HYPRE_ExecutionPolicy
+{
+   HYPRE_EXEC_UNDEFINED = -1,
+   HYPRE_EXEC_HOST          ,
+   HYPRE_EXEC_DEVICE
+} HYPRE_ExecutionPolicy;
 
 #ifdef __cplusplus
 }

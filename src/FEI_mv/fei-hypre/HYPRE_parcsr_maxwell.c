@@ -1,23 +1,13 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
-
-
-
-
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
 #include <math.h>
 
 #include "utilities/_hypre_utilities.h"
@@ -63,11 +53,11 @@ int HYPRE_ParCSRCotreeCreate(MPI_Comm comm, HYPRE_Solver *solver)
 {
    hypre_CotreeData *cotree_data;
    void             *void_data;
- 
+
    cotree_data = hypre_CTAlloc(hypre_CotreeData,  1, HYPRE_MEMORY_HOST);
    void_data = (void *) cotree_data;
    *solver = (HYPRE_Solver) void_data;
- 
+
    (cotree_data -> Aee)                = NULL;
    (cotree_data -> Acc)                = NULL;
    (cotree_data -> Act)                = NULL;
@@ -91,7 +81,7 @@ int HYPRE_ParCSRCotreeDestroy(HYPRE_Solver solver)
 {
    void             *cotree_vdata = (void *) solver;
    hypre_CotreeData *cotree_data = (hypre_CotreeData *) cotree_vdata;
- 
+
    if (cotree_data)
    {
       hypre_TFree(cotree_data, HYPRE_MEMORY_HOST);
@@ -181,7 +171,7 @@ int HYPRE_ParCSRCotreeSetup(HYPRE_Solver solver, HYPRE_ParCSRMatrix A,
    for (ii = 0; ii <= nprocs; ii++) new_partition[ii] = partition[ii];
 /*   partition = hypre_ParVectorPartitioning((hypre_ParVector *) b);  */
    new_vector = hypre_ParVectorCreate(hypre_ParVectorComm((hypre_ParVector *)b),
-		   (int) hypre_ParVectorGlobalSize((hypre_ParVector *) b),	
+		   (int) hypre_ParVectorGlobalSize((hypre_ParVector *) b),
                    new_partition);
    hypre_ParVectorInitialize(new_vector);
    cotree_data->w = new_vector;

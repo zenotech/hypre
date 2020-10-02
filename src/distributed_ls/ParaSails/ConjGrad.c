@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 /******************************************************************************
  *
@@ -57,7 +52,7 @@ static void Axpy(HYPRE_Int n, HYPRE_Real alpha, HYPRE_Real *x, HYPRE_Real *y)
 /*--------------------------------------------------------------------------
  * PCG_ParaSails - PCG solver using ParaSails.
  * Use NULL for ps if to get unpreconditioned solve.
- * Solver will stop at step 500 if rel. resid. norm reduction is not less 
+ * Solver will stop at step 500 if rel. resid. norm reduction is not less
  * than 0.1 at that point.
  *--------------------------------------------------------------------------*/
 
@@ -98,7 +93,7 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
    MatrixMatvec(mat, x, r);  /* r = Ax */
    ScaleVector(n, -1.0, r);  /* r = -r */
    Axpy(n, 1.0, b, r);       /* r = r + b */
- 
+
    /* p = C*r */
    if (ps != NULL)
       ParaSailsApply(ps, r, p);
@@ -125,7 +120,7 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
 
       /* r = r - alpha*s */
       Axpy(n, -alpha, s, r);
-         
+
       /* s = C*r */
       if (ps != NULL)
          ParaSailsApply(ps, r, s);
@@ -154,12 +149,12 @@ void PCG_ParaSails(Matrix *mat, ParaSails *ps, HYPRE_Real *b, HYPRE_Real *x,
             hypre_printf("Aborting solve due to slow or no convergence.\n");
          break;
       }
- 
+
       /* beta = gamma / gamma_old */
       beta = gamma / gamma_old;
 
       /* p = s + beta p */
-      ScaleVector(n, beta, p);   
+      ScaleVector(n, beta, p);
       Axpy(n, 1.0, s, p);
    }
 

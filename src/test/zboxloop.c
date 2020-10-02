@@ -1,14 +1,9 @@
-/*BHEADER**********************************************************************
- * Copyright (c) 2008,  Lawrence Livermore National Security, LLC.
- * Produced at the Lawrence Livermore National Laboratory.
- * This file is part of HYPRE.  See file COPYRIGHT for details.
+/******************************************************************************
+ * Copyright 1998-2019 Lawrence Livermore National Security, LLC and other
+ * HYPRE Project Developers. See the top-level COPYRIGHT file for details.
  *
- * HYPRE is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License (as published by the Free
- * Software Foundation) version 2.1 dated February 1999.
- *
- * $Revision$
- ***********************************************************************EHEADER*/
+ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+ ******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,12 +14,13 @@
 #include "HYPRE_krylov.h"
 
 #include "_hypre_struct_mv.h"
+#include "_hypre_struct_mv.hpp"
 
 /*--------------------------------------------------------------------------
  * Test driver to time new boxloops and compare to the old ones
  *--------------------------------------------------------------------------*/
- 
-#define DEVICE_VAR 
+
+#define DEVICE_VAR
 
 hypre_int
 main( hypre_int argc,
@@ -44,7 +40,7 @@ main( hypre_int argc,
    HYPRE_Int         xi1;
    HYPRE_Real       *xp1, *xp2, *xp3, *xp4;
    hypre_Index       loop_size, start, unit_stride, index;
-   
+
    /*-----------------------------------------------------------
     * Initialize some stuff
     *-----------------------------------------------------------*/
@@ -58,7 +54,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Set defaults
     *-----------------------------------------------------------*/
- 
+
    dim = 3;
 
    nx = 10;
@@ -72,7 +68,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Parse command line
     *-----------------------------------------------------------*/
- 
+
    print_usage = 0;
    arg_index = 1;
    while (arg_index < argc)
@@ -110,7 +106,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Print usage info
     *-----------------------------------------------------------*/
- 
+
    if ( (print_usage) && (myid == 0) )
    {
       hypre_printf("\n");
@@ -176,7 +172,7 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Print driver parameters
     *-----------------------------------------------------------*/
- 
+
    if (myid == 0)
    {
       hypre_printf("Running with these driver parameters:\n");
@@ -204,7 +200,7 @@ main( hypre_int argc,
    fail = 0;
    sum = 0;
    hypre_SerialBoxLoop1Begin(3, loop_size,
-			     x1_data_box, start, unit_stride, xi1);
+                             x1_data_box, start, unit_stride, xi1);
    {
       sum += xp1[xi1];
       if (xp1[xi1] != 1)
