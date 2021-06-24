@@ -25,6 +25,11 @@ function(add_hypre_executables EXE_SRCS)
       set_source_files_properties(${SRC_FILENAME} PROPERTIES LANGUAGE CUDA)
     endif (HYPRE_USING_CUDA)
 
+    if (HYPRE_USING_HIP)
+      set_source_files_properties(${SRC_FILENAME} PROPERTIES
+        HIP_SOURCE_PROPERTY_FORMAT TRUE)
+    endif (HYPRE_USING_HIP)
+
     string(REPLACE ".c" "" EXE_NAME ${SRC_FILENAME})
     # Actually add the exe
     add_executable(${EXE_NAME} ${SRC_FILE})

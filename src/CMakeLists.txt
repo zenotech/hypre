@@ -73,8 +73,9 @@ option(HYPRE_BUILD_TESTS             "Build tests" OFF)
 option(HYPRE_USING_HOST_MEMORY       "Use host memory" ON)
 set(HYPRE_WITH_EXTRA_CFLAGS       "" CACHE STRING "Define extra C compile flags")
 set(HYPRE_WITH_EXTRA_CXXFLAGS     "" CACHE STRING "Define extra CXX compile flags")
-# CUDA options
+# GPU options
 option(HYPRE_WITH_CUDA               "Use CUDA. Require cuda-8.0 or higher" OFF)
+option(HYPRE_WITH_HIP                "Use Use HIP for AMD GPUs" OFF)
 option(HYPRE_ENABLE_UNIFIED_MEMORY   "Use unified memory for allocating the memory" OFF)
 option(HYPRE_ENABLE_CUDA_STREAMS     "Use CUDA streams" ON)
 option(HYPRE_ENABLE_CUSPARSE         "Use cuSPARSE" ON)
@@ -171,6 +172,10 @@ endif ()
 
 # CUDA
 if (HYPRE_WITH_CUDA)
+  if (HYPRE_WITH_HIP)
+    message(FATAL_ERROR "HYPRE_WITH_CUDA and HYPRE_WITH_HIP are mutually exclusive.")
+  endif()
+
   enable_language(CXX)
   message(STATUS "Enabled support for CXX.")
 
@@ -251,6 +256,13 @@ if (HYPRE_WITH_CUDA)
     set(HYPRE_USING_HOST_MEMORY ON CACHE BOOL "" FORCE)
   endif (CMAKE_CUDA_COMPILER)
 endif (HYPRE_WITH_CUDA)
+
+# AMD HIP
+if (HYPRE_WITH_HIP)
+  find_package(HIP REQUIRED)
+  set(HYPRE_USING_HIP ON CACHE BOOL "" FORCE)
+  set(HYPRE_USING_GPU ON CACHE BOOL "" FORCE)
+endif (HYPRE_WITH_HIP)
 
 # Add any extra C compiler flags HYPRE_WITH_EXTRA_CFLAGS
 if (NOT HYPRE_WITH_EXTRA_CFLAGS STREQUAL "")
@@ -369,7 +381,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   )
 
 if (HYPRE_USING_CUDA)
-  set_source_files_properties(${HYPRE_CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
+  set_source_files_properties(${HYPRE_GPU_SOURCES} PROPERTIES LANGUAGE CUDA)
+elseif (HYPRE_USING_HIP)
+  set_source_files_properties(${HYPRE_GPU_SOURCES} PROPERTIES HIP_SOURCE_PROPERTY_FORMAT TRUE)
 endif ()
 
 # Set MPI compile flags
