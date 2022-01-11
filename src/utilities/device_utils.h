@@ -76,6 +76,18 @@
 #endif // defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_DEVICE_OPENMP)
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ *                          GPU item and range definitions
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+#if defined(HYPRE_USING_CUDA) || defined(HYPRE_USING_HIP)
+typedef int                 hypre_item;
+typedef dim3                hypre_range;
+#elif defined(HYPRE_USING_SYCL)
+typedef sycl::nd_item<1>    hypre_item;
+typedef sycl::range<1>      hypre_range;
+#endif
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *      macros for wrapping cuda/hip/sycl calls for error reporting
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -120,7 +132,7 @@
   func_name(oneapi::dpl::execution::make_device_policy(                                      \
            *hypre_HandleComputeStream(hypre_handle())), __VA_ARGS__);
 
-#define HYPRE_SYCL_LAUNCH(kernel_name, gridsize, blocksize, ...)                             \
+#define HYPRE_GPU_LAUNCH(kernel_name, gridsize, blocksize, ...)                              \
 {                                                                                            \
    if ( gridsize[0] == 0 || blocksize[0] == 0 )                                              \
    {                                                                                         \
@@ -133,7 +145,7 @@
    {                                                                                         \
       hypre_HandleComputeStream(hypre_handle())->submit([&] (sycl::handler& cgh) {           \
          cgh.parallel_for(sycl::nd_range<1>(gridsize*blocksize, blocksize),                  \
-            [=] (sycl::nd_item<1> item) { (kernel_name)(item, __VA_ARGS__);                  \
+            [=] (hypre_Item item) { (kernel_name)(item, __VA_ARGS__);                        \
          });                                                                                 \
       }).wait_and_throw();                                                                   \
    }                                                                                         \
@@ -435,7 +447,7 @@ using namespace thrust::placeholders;
 #define GPU_LAUNCH_SYNC
 #endif // defined(HYPRE_DEBUG)
 
-#define HYPRE_CUDA_LAUNCH2(kernel_name, gridsize, blocksize, shmem_size, ...)                                                 \
+#define HYPRE_GPU_LAUNCH2(kernel_name, gridsize, blocksize, shmem_size, ...)                                                  \
 {                                                                                                                             \
    if ( gridsize.x  == 0 || gridsize.y  == 0 || gridsize.z  == 0 ||                                                           \
         blocksize.x == 0 || blocksize.y == 0 || blocksize.z == 0 )                                                            \
@@ -446,12 +458,13 @@ using namespace thrust::placeholders;
    }                                                                                                                          \
    else                                                                                                                       \
    {                                                                                                                          \
-      (kernel_name) <<< (gridsize), (blocksize), shmem_size, hypre_HandleComputeStream(hypre_handle()) >>> (__VA_ARGS__); \
+      hypre_Item item;                                                                                                        \
+      (kernel_name) <<< (gridsize), (blocksize), shmem_size, hypre_HandleComputeStream(hypre_handle()) >>> (item,__VA_ARGS__);\
       GPU_LAUNCH_SYNC;                                                                                                        \
    }                                                                                                                          \
 }
 
-#define HYPRE_CUDA_LAUNCH(kernel_name, gridsize, blocksize, ...) HYPRE_CUDA_LAUNCH2(kernel_name, gridsize, blocksize, 0, __VA_ARGS__)
+#define HYPRE_GPU_LAUNCH(kernel_name, gridsize, blocksize, ...) HYPRE_GPU_LAUNCH2(kernel_name, gridsize, blocksize, 0, __VA_ARGS__)
 
 /* RL: TODO Want macro HYPRE_THRUST_CALL to return value but I don't know how to do it right
  * The following one works OK for now */
