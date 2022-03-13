@@ -136,6 +136,7 @@ HYPRE_SStructMatrixCreate( MPI_Comm              comm,
 
    hypre_SStructMatrixNSSymmetric(matrix) = 0;
    hypre_SStructMatrixGlobalSize(matrix)  = 0;
+   hypre_SStructMatrixDataSize(matrix)    = 0;
    hypre_SStructMatrixRefCount(matrix)    = 1;
 
    /* GEC0902 setting the default of the object_type to HYPRE_SSTRUCT */
@@ -622,13 +623,15 @@ HYPRE_SStructMatrixGetBoxValues2( HYPRE_SStructMatrix  matrix,
 HYPRE_Int
 HYPRE_SStructMatrixAssemble( HYPRE_SStructMatrix matrix )
 {
-   HYPRE_Int               ndim           = hypre_SStructMatrixNDim(matrix);
-   hypre_SStructGraph     *graph          = hypre_SStructMatrixGraph(matrix);
-   HYPRE_Int               nparts         = hypre_SStructMatrixNParts(matrix);
-   hypre_SStructPMatrix  **pmatrices      = hypre_SStructMatrixPMatrices(matrix);
-   hypre_SStructGrid      *grid           = hypre_SStructGraphGrid(graph);
+   HYPRE_Int               ndim            = hypre_SStructMatrixNDim(matrix);
+   hypre_SStructGraph     *graph           = hypre_SStructMatrixGraph(matrix);
+   HYPRE_Int               nparts          = hypre_SStructMatrixNParts(matrix);
+   hypre_SStructPMatrix  **pmatrices       = hypre_SStructMatrixPMatrices(matrix);
+   hypre_ParCSRMatrix     *parcsrmatrix    = hypre_SStructMatrixParCSRMatrix(matrix);
+   hypre_SStructGrid      *grid            = hypre_SStructGraphGrid(graph);
    hypre_SStructCommInfo **vnbor_comm_info = hypre_SStructGridVNborCommInfo(grid);
    HYPRE_Int               vnbor_ncomms    = hypre_SStructGridVNborNComms(grid);
+   hypre_SStructPMatrix   *pmatrix;
 
    HYPRE_Int               part;
 
@@ -639,7 +642,7 @@ HYPRE_SStructMatrixAssemble( HYPRE_SStructMatrix matrix )
    hypre_CommPkg          *comm_pkg;
    hypre_CommHandle       *comm_handle;
    HYPRE_Int               ci;
-
+   HYPRE_Int               data_size;
 
    /*------------------------------------------------------
     * NOTE: Inter-part couplings were taken care of earlier.
@@ -765,6 +768,7 @@ HYPRE_SStructMatrixAssemble( HYPRE_SStructMatrix matrix )
     * Assemble P and U matrices
     *------------------------------------------------------*/
 
+   /* P-Matrices */
    for (part = 0; part < nparts; part++)
    {
       hypre_SStructPMatrixAssemble(pmatrices[part]);
@@ -772,6 +776,26 @@ HYPRE_SStructMatrixAssemble( HYPRE_SStructMatrix matrix )
 
    /* U-matrix */
    hypre_SStructUMatrixAssemble(matrix);
+
+   /*------------------------------------------------------
+    * Update data size
+    *------------------------------------------------------*/
+
+   data_size = 0;
+   for (part = 0; part < nparts; part++)
+   {
+      pmatrix = hypre_SStructMatrixPMatrix(matrix, part);
+
+      data_size += hypre_SStructPMatrixDataSize(pmatrix);
+   }
+
+   if (parcsrmatrix)
+   {
+      data_size += hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixDiag(parcsrmatrix));
+      data_size += hypre_CSRMatrixNumNonzeros(hypre_ParCSRMatrixOffd(parcsrmatrix));
+   }
+
+   hypre_SStructMatrixDataSize(matrix) = data_size;
 
    return hypre_error_flag;
 }
@@ -1242,6 +1266,80 @@ HYPRE_SStructMatrixMatvec( HYPRE_Complex       alpha,
                            HYPRE_SStructVector y     )
 {
    hypre_SStructMatvec(alpha, A, x, beta, y);
+
+   return hypre_error_flag;
+}
+
+/*--------------------------------------------------------------------------
+ *--------------------------------------------------------------------------*/
+
+HYPRE_Int
+HYPRE_SStructMatrixToIJMatrix( HYPRE_SStructMatrix  matrix,
+                               HYPRE_Int            fill_diagonal,
+                               HYPRE_IJMatrix      *ijmatrix_ptr )
+{
+   HYPRE_IJMatrix      ijmatrix;
+   HYPRE_IJMatrix      ij_s;
+   HYPRE_IJMatrix      ij_u;
+   HYPRE_ParCSRMatrix  parcsr_u;
+   HYPRE_ParCSRMatrix  parcsr_s;
+   HYPRE_ParCSRMatrix  parcsr_ss;
+
+   HYPRE_BigInt        nrows_ss;
+   HYPRE_BigInt        ncols_ss;
+
+   if (!matrix)
+   {
+      hypre_error_in_arg(1);
+      return hypre_error_flag;
+   }
+
+   HYPRE_ANNOTATE_FUNC_BEGIN;
+
+   if (hypre_SStructMatrixObjectType(matrix) != HYPRE_PARCSR)
+   {
+      hypre_SStructMatrixToUMatrix((hypre_SStructMatrix *) matrix, fill_diagonal, &ij_s);
+
+      /* Add the unstructured part */
+      ij_u = hypre_SStructMatrixIJMatrix(matrix);
+      if (ij_u)
+      {
+         HYPRE_IJMatrixGetObject(ij_u, (void **) &parcsr_u);
+         HYPRE_IJMatrixGetObject(ij_s, (void **) &parcsr_s);
+
+         hypre_ParCSRMatrixAdd(1.0, parcsr_u, 1.0, parcsr_s, &parcsr_ss);
+
+         /* For square matrices, the first row entry is the diagonal coefficient */
+         nrows_ss = hypre_ParCSRMatrixGlobalNumRows(parcsr_ss);
+         ncols_ss = hypre_ParCSRMatrixGlobalNumCols(parcsr_ss);
+         if (nrows_ss == ncols_ss)
+         {
+            hypre_ParCSRMatrixReorder(parcsr_ss);
+         }
+
+         HYPRE_IJMatrixDestroy(ij_s);
+         HYPRE_IJMatrixCreate(hypre_ParCSRMatrixComm(parcsr_ss),
+                              hypre_ParCSRMatrixFirstRowIndex(parcsr_ss),
+                              hypre_ParCSRMatrixLastRowIndex(parcsr_ss),
+                              hypre_ParCSRMatrixFirstColDiag(parcsr_ss),
+                              hypre_ParCSRMatrixLastColDiag(parcsr_ss),
+                              &ijmatrix);
+         HYPRE_IJMatrixSetObjectType(ijmatrix, HYPRE_PARCSR);
+         hypre_IJMatrixSetObject(ijmatrix, parcsr_ss);
+      }
+      else
+      {
+         ijmatrix = ij_s;
+      }
+   }
+   else
+   {
+      ijmatrix = hypre_SStructMatrixIJMatrix(matrix);
+   }
+
+   *ijmatrix_ptr = ijmatrix;
+
+   HYPRE_ANNOTATE_FUNC_END;
 
    return hypre_error_flag;
 }

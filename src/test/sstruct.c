@@ -2239,6 +2239,7 @@ PrintUsage( char *progname,
       hypre_printf("                        248- Struct BiCGSTAB with diagonal scaling\n");
       hypre_printf("                        249- Struct BiCGSTAB\n");
       hypre_printf("  -print             : print out the system\n");
+      hypre_printf("  -convertIJ         : convert the linear system to IJ format\n");
       hypre_printf("  -rhsfromcosine     : solution is cosine function (default)\n");
       hypre_printf("  -rhsone            : rhs is vector with unit components\n");
       hypre_printf("  -tol <val>         : convergence tolerance (default 1e-6)\n");
@@ -2333,6 +2334,7 @@ main( hypre_int argc,
    Index                *block;
    HYPRE_Int             solver_id, object_type;
    HYPRE_Int             print_system;
+   HYPRE_Int             convert_system_IJ;
    HYPRE_Int             cosine;
    HYPRE_Real            scale;
    HYPRE_Int             read_fromfile_flag = 0;
@@ -2351,6 +2353,7 @@ main( hypre_int argc,
    HYPRE_SStructSolver   solver;
    HYPRE_SStructSolver   precond;
 
+   HYPRE_IJMatrix        ij_A;
    HYPRE_ParCSRMatrix    par_A;
    HYPRE_ParVector       par_b;
    HYPRE_ParVector       par_x;
@@ -2673,6 +2676,11 @@ main( hypre_int argc,
       {
          arg_index++;
          print_system = 1;
+      }
+      else if ( strcmp(argv[arg_index], "-convert") == 0 )
+      {
+         arg_index++;
+         convert_system_IJ = 1;
       }
       else if ( strcmp(argv[arg_index], "-rhsfromcosine") == 0 )
       {
@@ -3769,6 +3777,16 @@ main( hypre_int argc,
       {
          HYPRE_SStructMatrixPrint("sstruct.out.G",  G, 0);
       }
+   }
+
+   if (convert_system_IJ)
+   {
+      HYPRE_SStructMatrixToIJMatrix(A, 1, &ij_A);
+      if (print_system)
+      {
+         HYPRE_IJMatrixPrint(ij_A, "IJ.out.A");
+      }
+      HYPRE_IJMatrixDestroy(ij_A);
    }
 
    /*-----------------------------------------------------------

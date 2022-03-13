@@ -86,6 +86,7 @@ HYPRE_Int HYPRE_SStructMatrixRead ( MPI_Comm comm, const char *filename,
                                     HYPRE_SStructMatrix *matrix_ptr );
 HYPRE_Int HYPRE_SStructMatrixMatvec ( HYPRE_Complex alpha, HYPRE_SStructMatrix A,
                                       HYPRE_SStructVector x, HYPRE_Complex beta, HYPRE_SStructVector y );
+HYPRE_Int HYPRE_SStructMatrixToIJMatrix ( HYPRE_SStructMatrix matrix, HYPRE_Int fill_diagonal, HYPRE_IJMatrix *ijmatrix_ptr );
 
 /* HYPRE_sstruct_stencil.c */
 HYPRE_Int HYPRE_SStructStencilCreate ( HYPRE_Int ndim, HYPRE_Int size,
@@ -244,8 +245,14 @@ HYPRE_Int hypre_SStructUMatrixInitialize ( hypre_SStructMatrix *matrix );
 HYPRE_Int hypre_SStructUMatrixSetValues ( hypre_SStructMatrix *matrix, HYPRE_Int part,
                                           hypre_Index index, HYPRE_Int var, HYPRE_Int nentries, HYPRE_Int *entries, HYPRE_Complex *values,
                                           HYPRE_Int action );
+HYPRE_Int hypre_SStructUMatrixSetBoxValuesCore( hypre_SStructMatrix *matrix, HYPRE_Int part,
+                                                hypre_Box *set_box, HYPRE_Int var, HYPRE_Int nentries,
+                                                HYPRE_Int *entries, hypre_Box *value_box,
+                                                HYPRE_Complex *values, HYPRE_Int action,
+                                                HYPRE_IJMatrix ijmatrix );
 HYPRE_Int hypre_SStructUMatrixSetBoxValues( hypre_SStructMatrix *matrix, HYPRE_Int part,
-                                            hypre_Box *set_box, HYPRE_Int var, HYPRE_Int nentries, HYPRE_Int *entries, hypre_Box *value_box,
+                                            hypre_Box *set_box, HYPRE_Int var, HYPRE_Int nentries,
+                                            HYPRE_Int *entries, hypre_Box *value_box,
                                             HYPRE_Complex *values, HYPRE_Int action );
 HYPRE_Int hypre_SStructUMatrixAssemble ( hypre_SStructMatrix *matrix );
 HYPRE_Int hypre_SStructMatrixRef ( hypre_SStructMatrix *matrix, hypre_SStructMatrix **matrix_ref );
@@ -261,6 +268,7 @@ HYPRE_Int hypre_SStructMatrixSetBoxValues( HYPRE_SStructMatrix matrix, HYPRE_Int
 HYPRE_Int hypre_SStructMatrixSetInterPartValues( HYPRE_SStructMatrix matrix, HYPRE_Int part,
                                                  hypre_Box *set_box, HYPRE_Int var, HYPRE_Int nentries, HYPRE_Int *entries, hypre_Box *value_box,
                                                  HYPRE_Complex *values, HYPRE_Int action );
+HYPRE_Int hypre_SStructMatrixToUMatrix ( HYPRE_SStructMatrix matrix, HYPRE_Int fill_diagonal, HYPRE_IJMatrix *ijmatrix_ptr );
 
 /* sstruct_matvec.c */
 HYPRE_Int hypre_SStructPMatvecCreate ( void **pmatvec_vdata_ptr );
