@@ -2959,6 +2959,7 @@ main( hypre_int argc,
       hypre_TMemcpy(values_d, values_h, HYPRE_Real, local_num_rows, memory_location, HYPRE_MEMORY_HOST);
 
       /* RHS */
+      hypre_printf("WM: doing IJ stuff for RHS\n");
       HYPRE_IJVectorCreate(hypre_MPI_COMM_WORLD, first_local_row, last_local_row, &ij_b);
       HYPRE_IJVectorSetObjectType(ij_b, HYPRE_PARCSR);
       HYPRE_IJVectorInitialize_v2(ij_b, memory_location);
@@ -2966,6 +2967,7 @@ main( hypre_int argc,
       HYPRE_IJVectorAssemble(ij_b);
       ierr = HYPRE_IJVectorGetObject( ij_b, &object );
       b = (HYPRE_ParVector) object;
+      hypre_printf("WM: finished IJ stuff for RHS\n");
 
       hypre_Memset(values_d, 0, local_num_rows * sizeof(HYPRE_Real), HYPRE_MEMORY_DEVICE);
       /* Initial guess */
@@ -3440,9 +3442,11 @@ main( hypre_int argc,
    /*-----------------------------------------------------------
     * Migrate the system to the wanted memory space
     *-----------------------------------------------------------*/
+   hypre_printf("WM: debug - about to migrate\n");
    hypre_ParCSRMatrixMigrate(parcsr_A, hypre_HandleMemoryLocation(hypre_handle()));
    hypre_ParVectorMigrate(b, hypre_HandleMemoryLocation(hypre_handle()));
    hypre_ParVectorMigrate(x, hypre_HandleMemoryLocation(hypre_handle()));
+   hypre_printf("WM: debug - done with migrate\n");
 
    if (benchmark)
    {

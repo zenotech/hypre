@@ -768,22 +768,6 @@ hypre_CSRMatrixColNNzRealDevice( hypre_CSRMatrix  *A,
       /*                                   ones, */
       /*                                   reduced_col_indices, */
       /*                                   reduced_col_nnz); */
-
-      /* WM: this also doesn't work for me */
-      /* std::equal_to<HYPRE_Int> pred; */
-      /* std::plus<HYPRE_Int> func; */
-
-      /* auto new_end = HYPRE_ONEDPL_CALL(oneapi::dpl::reduce_by_segment, */
-      /*                                      A_j_sorted, */
-      /*                                      A_j_sorted + nnz_A, */
-      /*                                      ones, */
-      /*                                      reduced_col_indices, */
-      /*                                      reduced_col_nnz, */
-      /*                                      pred, */
-      /*                                      func); */
-
-
-
       /* WM: this works? Mysterious... */
       std::pair<HYPRE_Int*, HYPRE_Int*> new_end = oneapi::dpl::reduce_by_segment(
                                          oneapi::dpl::execution::make_device_policy<class devutils>(*hypre_HandleComputeStream( hypre_handle())),

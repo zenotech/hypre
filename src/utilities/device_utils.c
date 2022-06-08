@@ -1188,6 +1188,71 @@ hypreDevice_IntAxpyn(HYPRE_Int *d_x, size_t n, HYPRE_Int *d_y, HYPRE_Int *d_z, H
    return hypreDevice_Axpyn(d_x, n, d_y, d_z, a);
 }
 
+template<typename T>
+__global__ void
+hypreGPUKernel_filln(
+#if defined(HYPRE_USING_SYCL)
+   sycl::nd_item<1>& item,
+#endif
+   T *x, size_t n, T v)
+{
+#if defined(HYPRE_USING_SYCL)
+   HYPRE_Int i = static_cast<HYPRE_Int>(item.get_global_linear_id());
+#else
+   HYPRE_Int i = hypre_cuda_get_grid_thread_id<1, 1>();
+#endif
+
+   if (i < n)
+   {
+      x[i] = v;
+   }
+}
+
+template<typename T>
+HYPRE_Int
+hypreDevice_Filln(T *d_x, size_t n, T v)
+{
+#if 0
+   HYPRE_THRUST_CALL( fill_n, d_x, n, v);
+#else
+   if (n <= 0)
+   {
+      return hypre_error_flag;
+   }
+
+   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
+   dim3 gDim = hypre_GetDefaultDeviceGridDimension(n, "thread", bDim);
+
+   HYPRE_GPU_LAUNCH( hypreGPUKernel_filln, gDim, bDim, d_x, n, v );
+#endif
+
+   return hypre_error_flag;
+}
+
+HYPRE_Int
+hypreDevice_ComplexFilln(HYPRE_Complex *d_x, size_t n, HYPRE_Complex v)
+{
+   return hypreDevice_Filln(d_x, n, v);
+}
+
+HYPRE_Int
+hypreDevice_CharFilln(char *d_x, size_t n, char v)
+{
+   return hypreDevice_Filln(d_x, n, v);
+}
+
+HYPRE_Int
+hypreDevice_IntFilln(HYPRE_Int *d_x, size_t n, HYPRE_Int v)
+{
+   return hypreDevice_Filln(d_x, n, v);
+}
+
+HYPRE_Int
+hypreDevice_BigIntFilln(HYPRE_BigInt *d_x, size_t n, HYPRE_BigInt v)
+{
+   return hypreDevice_Filln(d_x, n, v);
+}
+
 #if defined(HYPRE_USING_CURAND)
 curandGenerator_t
 hypre_DeviceDataCurandGenerator(hypre_DeviceData *data)
@@ -1494,63 +1559,6 @@ HYPRE_Int
 hypreDevice_ComplexScalen(HYPRE_Complex *d_x, size_t n, HYPRE_Complex *d_y, HYPRE_Complex v)
 {
    return hypreDevice_Scalen(d_x, n, d_y, v);
-}
-
-template<typename T>
-__global__ void
-hypreGPUKernel_filln(T *x, size_t n, T v)
-{
-   HYPRE_Int i = hypre_cuda_get_grid_thread_id<1, 1>();
-
-   if (i < n)
-   {
-      x[i] = v;
-   }
-}
-
-template<typename T>
-HYPRE_Int
-hypreDevice_Filln(T *d_x, size_t n, T v)
-{
-#if 0
-   HYPRE_THRUST_CALL( fill_n, d_x, n, v);
-#else
-   if (n <= 0)
-   {
-      return hypre_error_flag;
-   }
-
-   dim3 bDim = hypre_GetDefaultDeviceBlockDimension();
-   dim3 gDim = hypre_GetDefaultDeviceGridDimension(n, "thread", bDim);
-
-   HYPRE_GPU_LAUNCH( hypreGPUKernel_filln, gDim, bDim, d_x, n, v );
-#endif
-
-   return hypre_error_flag;
-}
-
-HYPRE_Int
-hypreDevice_ComplexFilln(HYPRE_Complex *d_x, size_t n, HYPRE_Complex v)
-{
-   return hypreDevice_Filln(d_x, n, v);
-}
-
-HYPRE_Int
-hypreDevice_CharFilln(char *d_x, size_t n, char v)
-{
-   return hypreDevice_Filln(d_x, n, v);
-}
-
-HYPRE_Int
-hypreDevice_IntFilln(HYPRE_Int *d_x, size_t n, HYPRE_Int v)
-{
-   return hypreDevice_Filln(d_x, n, v);
-}
-
-HYPRE_Int
-hypreDevice_BigIntFilln(HYPRE_BigInt *d_x, size_t n, HYPRE_BigInt v)
-{
-   return hypreDevice_Filln(d_x, n, v);
 }
 
 /* Input: d_row_num, of size nrows, contains the rows indices that can be BigInt or Int

@@ -30,6 +30,7 @@ hypre_BoomerAMGSetup( void               *amg_vdata,
                       hypre_ParVector    *f,
                       hypre_ParVector    *u )
 {
+   hypre_printf("WM: debug - inside AMG setup\n");
    MPI_Comm            comm = hypre_ParCSRMatrixComm(A);
    hypre_ParAMGData   *amg_data = (hypre_ParAMGData*) amg_vdata;
 
