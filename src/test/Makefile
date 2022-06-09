@@ -72,7 +72,7 @@ LFLAGS =\
 
 HYPRE_DRIVERS =\
  ij.c\
- read_mats.c\
+ simple.c\
  ij_assembly.c\
  sstruct.c\
  struct.c\
@@ -146,7 +146,7 @@ ij: ij.o
 	@echo  "Building" $@ "... "
 	${LINK_CC} -o $@ $< ${LFLAGS}
 
-read_mats: read_mats.o
+simple: simple.o
 	@echo  "Building" $@ "... "
 	${LINK_CC} -o $@ $< ${LFLAGS}
 
