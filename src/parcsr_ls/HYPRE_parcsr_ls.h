@@ -3952,10 +3952,6 @@ HYPRE_MGRSetLevelFRelaxMethod(HYPRE_Solver solver, HYPRE_Int *relax_method );
  *    - 1 : Multi-level relaxation strategy for F-relaxation (V(1,0) cycle currently supported).
  *    - 2 : AMG.
  **/
-HYPRE_Int
-HYPRE_MGRSetFLevelRelaxType(HYPRE_Solver solver,
-                            HYPRE_Int *relax_type );
-
 /**
  * (Optional) Set the strategy for coarse grid computation.
  * Options for \e cg_method are:
@@ -4167,7 +4163,7 @@ HYPRE_MGRSetLevelSmoothIters( HYPRE_Solver solver,
  *    - 2 : Post-smoothing
  **/
 HYPRE_Int
-HYPRE_MGRSetLevelSmoothOrder( HYPRE_Solver solver,
+HYPRE_MGRSetGlobalSmoothCycle( HYPRE_Solver solver,
                               HYPRE_Int level_smooth_order );
 
 /**
